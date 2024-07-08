@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Candidate Interview Status</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            min-height: 100vh; 
+            min-width: 100vw; 
+        }
+
+        /* Main Container Styles */
+        .container {
+            width: 100%;
+            padding: 34px; 
+            background-color: #ffffff; 
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: #333333; 
+            margin-top: 0; 
+            margin-bottom: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333333; /* Dark text color */
+            text-align: center;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            text-align: left;
+            background-color: #f2f2f2; /* Light gray background */
+            color: #333333; /* Dark text color */
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        thead {
+            background-color: #1f2333; /* Dark header background */
+            color: #ffffff; /* White text color */
+            text-align: center;
+        }
+
+        thead th {
+            padding: 15px;
+            font-size: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #283e51; /* Dark bottom border */
+        }
+
+        tbody tr {
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #ffffff; /* White background for even rows */
+        }
+
+        tbody tr:hover {
+            background-color: #f2f2f2; /* Hover background */
+        }
+
+        tbody td {
+            padding: 15px;
+            border-top: 1px solid #ccc; /* Light border */
+        }
+
+        tbody td:last-child {
+            text-align: center;
+        }
+
+        /* Search and Pagination Styles */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .search-container button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .search-container button:hover {
+            background-color: #0056b3;
+        }
+        .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #1f6feb; /* Bright blue for pagination buttons */
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.pagination button.active {
+    background-color: #58a6ff; /* Light blue for active page button */
+}
+
+.pagination button.active:hover {
+    background-color: #8fbfef; /* Lighter blue on hover for active button */
+}
+
+.pagination button:hover {
+    background-color: #2c7bb6; /* Darker blue on hover for inactive buttons */
+}
+
+.pagination button.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: #30363d; /* Dark background for disabled buttons */
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Candidate Interview Status</h1>
+
+        <!-- Search Container -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by Candidate Name">
+            <button onclick="applySearch()" id="searchButton"><i class="fas fa-search"></i></button>
+            <button onclick="refreshInterviews()" id="refreshButton"><i class="fas fa-sync-alt"></i></button>
+        </div>
+
+        <!-- Table Wrapper -->
+        <div class="table-wrapper">
+            <table id="interviewTable">
+                <thead>
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Candidate Email</th>
+                        <th>Type of Interview</th>
+                        <th>Mode of Interview</th>
+                        <th>Stage</th>
+                        <th>Timing</th>
+                        <th>Interviewer Name</th>
+                        <th>Feedback</th>
+                        <th>Score</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="interviewData">
+                    <!-- Data will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div id="paginationControls" class="pagination"></div>
+    </div>
+
+    <script>
+        let interviews = []; 
+        let filteredInterviews = [];
+        const itemsPerPage = 5;
+        let currentPage = 1;
+        let searchColumn = 'candidate_name'; 
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchInterviews();
+        });
+
+        function fetchInterviews() {
+            fetch('http://localhost:3003/requested_candidates/feedback')
+                .then(response => response.json())
+                .then(data => {
+                    interviews = data;
+                    filteredInterviews = interviews; 
+                    displayInterviews();
+                })
+                .catch(error => console.error('Error fetching interviews:', error));
+        }
+
+        function renderPagination(totalItems) {
+            const paginationControls = document.getElementById('paginationControls');
+            paginationControls.innerHTML = '';
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.disabled = currentPage === 1;
+            prevButton.className = currentPage === 1 ? 'disabled' : '';
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayInterviews();
+                }
+            });
+            paginationControls.appendChild(prevButton);
+
+            // Page number buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.className = i === currentPage ? 'active' : '';
+                button.disabled = i === currentPage;
+                button.addEventListener('click', () => {
+                    currentPage = i;
+                    displayInterviews();
+                });
+                paginationControls.appendChild(button);
+            }
+
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.className = currentPage === totalPages ? 'disabled' : '';
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayInterviews();
+                }
+            });
+            paginationControls.appendChild(nextButton);
+        }
+
+        function displayInterviews() {
+            const interviewTableBody = document.getElementById('interviewData');
+            interviewTableBody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedInterviews = filteredInterviews.slice(startIndex, endIndex);
+
+            paginatedInterviews.forEach(interview => {
+                const row = createInterviewRow(interview);
+                interviewTableBody.appendChild(row);
+            });
+
+            renderPagination(filteredInterviews.length);
+        }
+
+        function createInterviewRow(interview) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${interview.candidate_name}</td>
+                <td>${interview.candidate_email}</td>
+                <td>${interview.type_of_interview}</td>
+                <td>${interview.mode_of_interview}</td>
+                <td>${interview.stage_of_interview}</td>
+                <td>${interview.scheduled_interview_timing}</td>
+                <td>${interview.interviewer_name}</td>
+                <td>${interview.feedback}</td>
+                <td>${interview.score}</td>
+                <td>${interview.status}</td>
+            `;
+            return row;
+        }
+
+        function applySearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            filteredInterviews = interviews.filter(interview =>
+                interview[searchColumn].toLowerCase().includes(searchTerm)
+            );
+
+            currentPage = 1;
+            displayInterviews();
+        }
+
+        function refreshInterviews() {
+            document.getElementById('searchInput').value = ''; // Clear search input
+            filteredInterviews = interviews; // Reset filtered interviews to all interviews
+            currentPage = 1; // Reset pagination to first page
+            displayInterviews(); // Redisplay all interviews
+        }
+    </script>
+</body>
+</html>

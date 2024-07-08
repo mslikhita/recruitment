@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Requests</title>
+    <link rel="stylesheet" href="requestlist.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="jobRequestList" class="container">
+        <h1>View Requests</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter search keyword">
+            <button onclick="applySearch()" id="searchButton"><i class="fas fa-search"></i></button>
+            <button onclick="refreshJobRequests()" id="refreshButton"><i class="fas fa-sync-alt"></i></button>
+        </div>
+
+        <table id="jobRequestTable">
+            <thead>
+                <tr>
+                    <th> User Name</th>
+                    <th> Designation</th>
+                    <th>Skills</th>
+                    <th> Experience</th>
+                    <th> Job Description Text</th>
+                    <th>Job Description File</th>
+                    <th>Action</th>
+                    <th>Status</th> <!-- Added missing closing tag -->
+                </tr>
+            </thead>
+            <tbody id="jobRequestBody">
+                <!-- Table rows will be dynamically populated -->
+            </tbody>
+        </table>
+        <div class="pagination" id="paginationControls">
+            <button id="prevPageBtn">&laquo; Prev</button>
+            <span id="pageInfo">Page 1</span>
+            <button id="nextPageBtn">Next &raquo;</button>
+        </div>
+    </div>
+
+    <!-- Popup Container -->
+    <div id="popupContainer" class="popup-container">
+        <div id="popupContent" class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <h2>Candidates for Job Request</h2>
+            <table id="candidateTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile Number</th>
+                        <th>Experience</th>
+                        <th>Job Portal</th>
+                        <th>Referred By</th>
+                        <th>Resume</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="candidateBody">
+                    <!-- Candidate details will be dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="requestlist.js"></script>
+</body>
+</html>
+

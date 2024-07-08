@@ -1,0 +1,93 @@
+.input-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.input-wrapper input {
+    text-align: center; /* Center the text and placeholder text */
+}
+
+#email {
+     /* Adjust the font size as needed */
+    text-align: center;
+    width: 253px;/* Center the text and placeholder text */
+}
+
+
+.login-form {
+    text-align: center;
+    margin-top: 141px;
+ 
+}
+
+ /* Center the form horizontally and vertically */
+  body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/images/v882-kul-67-a.jpg'); /* Background image path */
+    background-size: cover; /* Cover the entire viewport */
+    background-position: center; /* Center the background image */
+   
+}
+
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff; /* Adjust background color as needed */
+    border: 1px solid #ccc; /* Border style */
+}
+
+/* Center the logo */
+.logo {
+    display: block;
+    margin: 0 auto;
+    width: 100px; /* Adjust logo width */
+    height: auto;
+    margin-bottom: 20px; /* Adjust margin as needed */
+}
+
+/* Center the heading */
+h2 {
+    text-align: center;
+    margin-bottom: 20px; /* Adjust margin as needed */
+}
+
+/* Custom styles for form elements */
+.form-group {
+    margin-bottom: 20px; /* Adjust margin as needed */
+}
+
+.form-control {
+    padding: 10px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #007bff; /* Default button color */
+    color: #fff; /* Text color */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* New background color on hover */
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 10px; /* Adjust margin as needed */
+}

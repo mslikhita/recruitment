@@ -1,0 +1,119 @@
+/* Body and container styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f8f9fa; /* Subtle gradient background */
+}
+
+.container {
+    background-color: #f8f9fa; /* White background */
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    max-width: 90%;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Push content to top and bottom */
+}
+
+/* Heading styles */
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #2c3e50; /* Dark text color */
+}
+
+/* Form field styles */
+.form-group {
+    margin-bottom: 30px;
+    position: relative; /* Ensure relative positioning for absolute elements */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #2c3e50; /* Dark text color */
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: #333333; /* Dark text color */
+    transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3498db; 
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%232c3e50' width='16' height='16'%3E%3Cpath d='M10 12l-6-6-1.5 1.5L10 15l7.5-7.5-1.5-1.5z'/%3E%3C/svg%3E");
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+    padding-right: 30px;
+}
+
+/* Error message styles */
+.error-message {
+    color: #eb301b; /* Red color for error messages */
+    font-size: 14px;
+    margin-top: 5px;
+    display: none; /* Hide error message by default */
+}
+
+.form-group.invalid .error-message {
+    display: block; /* Display error message when the field is invalid */
+}
+
+/* Button styles */
+button {
+    background-color: #1f6feb; 
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Full width */
+    max-width: 100px; /* Max width to prevent overly wide buttons */
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #2980b9; /* Darker blue button color on hover */
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+}
+
+.button-group .prev {
+    margin-right: auto; 
+}
+
+.button-group .next {
+    margin-left: auto; 
+}

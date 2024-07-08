@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+   
+    <title>Login with Google</title>
+    <link rel="stylesheet" href="login.css" />
+</head>
+<body >
+   
+       
+        <form id="loginForm" class="login-form" action="/auth/google" method="GET">
+            <img src="images/samartha_logo.png" alt="Samartha Logo" class="logo mb-4">
+       
+            <h2 class="mb-4 text-center">Login</h2>
+            <div class="form-group">
+                <label for="email" style="margin-right: 201px;"><b>Email:</b></label>
+                <div class="input-wrapper">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign in with Google</button>
+            <button type="button" class="btn btn-secondary" onclick="location.href='register.html'">Register</button>
+        </form>
+    </div>
+
+    <!-- Optional: Include Bootstrap JS for client-side functionality (optional) -->
+   
+    <script src="login.js"></script>
+</body>
+</html>

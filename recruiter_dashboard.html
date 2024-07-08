@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: "Poppins", sans-serif;
+            background-image: url(images/samartha_logo.png) ;
+            height:100vh;
+            background-repeat: no-repeat;
+            background-position: center center;
+            position: relative;
+            overflow: hidden;
+            
+            }
+       
+            
+    
+
+        /* Ensure box-sizing consistency */
+        *, ::after, ::before {
+            box-sizing: border-box;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color:#373c4f ; 
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            margin-bottom: 0; 
+        }
+
+        .navbar-nav {
+            flex-direction: row; 
+            margin-left: 1px; 
+            align-items: center; 
+        }
+
+        .navbar-nav .nav-item {
+            margin-right: 10px; 
+        }
+
+        .navbar-nav .nav-link {
+            color: white;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link.active,
+        .navbar-nav .nav-link:focus,
+        .navbar-nav .nav-link:hover {
+            background-color: #242450; 
+            font-weight: bold;
+        }
+
+        .navbar-nav .ml-auto {
+            margin-left: auto !important;
+        }
+
+        /* Content area */
+        .content {
+            padding: 0; 
+            height: calc(100vh - 56px); 
+            overflow: hidden; 
+            position: relative;
+        }
+
+        #contentFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0; 
+            padding: 0; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="navbar-brand" href="#">
+                    <img src="images/samartha_logo.png" alt="Logo" height="55" class="highlighted-logo">
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="loadPage('Candidate.html')">TimeSheet Gen</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="loadPage('index.html')">Task Manager</a>
+            </li>
+            <!-- Dropdown for Requester -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="recruiterDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Recruiter
+                </a>
+                <div class="dropdown-menu" aria-labelledby="recruiterDropdown">
+                    <a class="dropdown-item" href="#" onclick="loadPage('requestlist.html')">View Request</a>
+                    <a class="dropdown-item" href="#" onclick="loadPage('addcandidate.html')">Add Candidate</a>
+                    <a class="dropdown-item" href="#" onclick="loadPage('candidatelist.html')">View All Candidates</a>
+                    <a class="dropdown-item" href="#" onclick="loadPage('schedule.html')">Schedule Interview</a>
+                    <a class="dropdown-item" href="#" onclick="loadPage('feedbackstatus.html')">View FeedBack</a>
+                </div>
+            </li>
+           
+        </ul>
+
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="logout()">Signout</a>
+            </li>
+        </ul>
+    </nav>
+
+
+    <div class="content">
+        <iframe id="contentFrame" src="" frameborder="0"></iframe>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+       // Get query parameters from the URL
+       const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const token = urlParams.get('token');
+        const eid = urlParams.get('eid');
+        console.log('Employee ID:', eid);
+
+        // Load a page with the given URL and append the eid parameter
+        function loadPage(pageUrl) {
+            const pageWithEid = `${pageUrl}?eid=${encodeURIComponent(eid)}`;
+            document.getElementById('contentFrame').src = pageWithEid;
+            highlightMenu(pageUrl);
+        }
+
+        function highlightMenu(pageUrl) {
+            const menuLinks = document.querySelectorAll('.navbar-nav .nav-link, .navbar-nav .dropdown-item');
+            menuLinks.forEach(link => {
+                if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(pageUrl)) {
+                    menuLinks.forEach(item => item.classList.remove('active'));
+                    link.classList.add('active');
+                    if (link.classList.contains('dropdown-item')) {
+                        link.closest('.dropdown').querySelector('.nav-link').classList.add('active');
+                    }
+                }
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('userToken'); 
+            window.location.href = 'login.html'; 
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            highlightMenu(initialPage);
+        });
+
+        
+    </script>
+</body>
+</html>
+
+
+
+
+

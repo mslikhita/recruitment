@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Candidate</title>
+    <link rel="stylesheet" href="addcandidate.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add Candidate</h1>
+        <form id="candidate-form" enctype="multipart/form-data">
+            <fieldset id="step1">
+                <div class="form-group required">
+                    <label for="name"><i class="fas fa-user"></i> Name *</label>
+                    <input type="text" id="name" name="candidate_name" placeholder="Enter full name" required>
+                    <div class="error-message">Please enter your name.</div>
+                </div>
+                <div class="form-group required">
+                    <label for="email"><i class="fas fa-envelope"></i> Email *</label>
+                    <input type="email" id="email" name="candidate_email" placeholder="Enter email address" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+                    <div class="error-message">Please enter a valid email address.</div>
+                </div>
+                <div class="form-group required">
+                    <label for="mobile_no"><i class="fas fa-phone-alt"></i> Mobile Number *</label>
+                    <input type="text" id="mobile_no" name="mobile_no" placeholder="Enter mobile number" required pattern="[0-9]{10}">
+                    <div class="error-message">Please enter a 10-digit mobile number.</div>
+                </div>
+                <div class="form-group required">
+                    <label for="experience"><i class="fas fa-briefcase"></i> Experience *</label>
+                    <input type="number" id="experience" name="experience" placeholder="Enter years of experience" required>
+                    <div class="error-message">Please enter your experience.</div>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="next">Next &rarr;</button>
+                </div>
+            </fieldset>
+            <fieldset id="step2">
+                <div class="form-group required">
+                    <label for="job_portal"><i class="fas fa-briefcase"></i> Job Portal *</label>
+                    <select id="job_portal" name="job_portal" required>
+                        <option value="">Select job portal</option>
+                        <option value="naukri">Naukri</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="reference">Reference</option>
+                    </select>
+                    <div class="error-message">Please select a job portal.</div>
+                </div>
+                <div class="form-group" id="refered_by_field" style="display: none;">
+                    <label for="referedby"><i class="fas fa-user-friends"></i> Referred By</label>
+                    <input type="text" id="referedby" name="refered_by" placeholder="Enter referrer's name">
+                </div>
+                <div class="form-group required">
+                    <label for="resume"><i class="fas fa-file-pdf"></i> Resume *</label>
+                    <input type="file" id="resume" name="resume" required accept=".pdf,.docx,.doc">
+                    <div class="error-message">Please upload a PDF, DOCX, or DOC file.</div>
+                    <small class="hint">Supported file types: PDF, DOCX, DOC</small>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="prev">&larr; Previous</button>
+                    <button type="submit"><i class="fas fa-user-plus"></i> Add Candidate</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <script src="addcandidate.js"></script>
+</body>
+</html>

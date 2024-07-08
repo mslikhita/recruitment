@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Schedule Interview</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items from the top */
+    min-height: 100vh; /* Full viewport height */
+    min-width: 100vw; /* Full viewport width */
+        }
+
+        .container {
+            width: 100%;
+    padding: 34px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #333333; /* Dark text color */
+    margin-top: 0; /* Adjusted margin-top */
+    margin-bottom: 0; /* Adjusted margin-bottom */
+    margin-left: auto;
+    margin-right: auto;
+        }
+
+        h1 {
+            font-size: 28px; /* Increased font size */
+            margin-bottom: 20px;
+            text-align: center;
+            color: #060301; /* Blue text color */
+        
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff; /* White background */
+            color: #333; /* Dark text color */
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Light box shadow */
+            overflow: hidden; /* Hide overflow for better shadow appearance */
+        }
+
+       
+        thead {
+    background-color: #1f2333; /* Dark header background */
+    color: #ffffff; /* White text color */
+}
+
+
+thead th {
+    padding: 15px;
+    font-size: 14px;
+    text-align: center;
+    text-transform: uppercase;
+    border-bottom: 2px solid #283e51; /* Dark bottom border */
+}
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9; /* Lighter row background */
+            text-align: center;
+        }
+
+        tbody tr:hover {
+            background-color: #e0e0e0; /* Darker hover background */
+        }
+
+        .dropdown {
+            width: 88%;
+            max-width: 200px; /* Adjusted width for dropdowns */
+            background-color: #fff; /* White dropdown background */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .dropdown select {
+            width: 100%;
+            border: none;
+            outline: none;
+            background-color: #fff; /* White dropdown background */
+            color: #333; /* Dark dropdown text color */
+            font-size: 14px; /* Adjust font size for better visibility */
+        }
+
+        .timing-of-interview {
+            width: 150px; /* Adjusted width for timing input */
+            text-align: center;
+        }
+
+        .timing-of-interview input[type="datetime-local"] {
+            width: 88%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #333; 
+            padding: 11px;/* Dark text color */
+        }
+
+        .schedule-button {
+            background-color: #1f6feb; /* Green button background */
+            color: #fff; /* White button text */
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .schedule-button:hover {
+            background-color: #1527ca; /* Darker green hover background */
+        }
+        .search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+        #searchInput {
+            width: 300px; /* Adjust width as needed */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px; /* Rounded left corners */
+            box-sizing: border-box;
+            font-size: 14px; /* Adjust font size */
+            margin-right: 5px; /* Add margin-right for space between input and button */
+        }
+
+        #searchButton {
+            background-color: #1f6feb; /* Dark blue background */
+            color: #fff; /* White text */
+            border: none;
+            padding: 8px 12px; /* Adjust padding for button */
+            border-radius: 0 4px 4px 0; /* Rounded right corners */
+            cursor: pointer;
+            font-size: 14px; /* Match font size with input */
+            transition: background-color 0.3s;
+        }
+
+        #refreshButton {
+            background-color: #1f6feb; /* Dark blue background */
+            color: #fff; /* White text */
+            border: none;
+            padding: 8px 12px; /* Adjust padding for button */
+            border-radius: 0 4px 4px 0; /* Rounded right corners */
+            cursor: pointer;
+            font-size: 14px; /* Match font size with input */
+            transition: background-color 0.3s;
+        }
+
+        #searchButton:hover {
+            background-color: #1527ca; /* Darker blue hover background */
+        }
+
+        #refreshButton:hover {
+            background-color: #1527ca; /* Darker blue hover background */
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            #searchInput {
+                width: auto; /* Auto width for smaller screens */
+                margin-right: 5px; /* Add margin-right for space between input and button */
+            }
+
+            #searchButton {
+                padding: 8px 10px; /* Adjust padding for smaller screens */
+            }
+            #refreshButton {
+                padding: 8px 10px; /* Adjust padding for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Schedule Candidate Interview</h1>
+        <div id="search-container">
+            <input type="text" id="searchInput" placeholder="Enter search keyword...">
+            <button id="searchButton"><i class="fas fa-search"></i></button>
+            <button id="refreshButton"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        <div style="overflow-x:auto;">
+            <table id="interviewTable">
+                <thead>
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Candidate Email ID</th>
+                        <th>Type of Interview</th>
+                        <th>Mode of Interview</th>
+                        <th>Stage</th>
+                        <th>Timing</th>
+                        <th>Interviewer Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="interviewData">
+                    <!-- Data will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const interviewTableBody = document.getElementById('interviewData');
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+
+            // Function to create a table row for a candidate
+            function createCandidateRow(candidate) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${candidate.candidate_name}</td>
+                    <td>${candidate.candidate_email}</td>
+                    <td class="type-of-interview" data-candidate-id="${candidate.requested_candidate_id}">
+                        <div class="dropdown">
+                            <select>
+                                <option value="Face to Face">Face to Face</option>
+                                <option value="Video Interview">Video Interview</option>
+                                <option value="Telephonic">Telephonic</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td class="mode-of-interview" data-candidate-id="${candidate.requested_candidate_id}">
+                        <div class="dropdown">
+                            <select>
+                                <option value="Technical">Technical</option>
+                                <option value="HR">HR</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td class="stage-of-interview" data-candidate-id="${candidate.requested_candidate_id}">
+                        <div class="dropdown">
+                            <select>
+                                <option value="Round 1">Round 1</option>
+                                <option value="Round 2">Round 2</option>
+                                <option value="Round 3">Round 3</option>
+                                <option value="Final">Final</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td class="timing-of-interview" data-candidate-id="${candidate.requested_candidate_id}">
+                        <input type="datetime-local">
+                    </td>
+                    <td class="interviewer-name" data-candidate-id="${candidate.requested_candidate_id}">
+                        ${candidate.interviewer_name}
+                    </td>
+                    <td><button class="schedule-button" data-candidate-id="${candidate.requested_candidate_id}">Schedule</button></td>
+                `;
+
+                // Populate dropdowns and timing input from localStorage
+                const typeDropdown = row.querySelector('.type-of-interview select');
+                const modeDropdown = row.querySelector('.mode-of-interview select');
+                const stageDropdown = row.querySelector('.stage-of-interview select');
+                const timingInput = row.querySelector('.timing-of-interview input');
+
+                typeDropdown.value = localStorage.getItem(`selectedType_${candidate.requested_candidate_id}`) || candidate.type_of_interview;
+                modeDropdown.value = localStorage.getItem(`selectedMode_${candidate.requested_candidate_id}`) || candidate.mode_of_interview;
+                stageDropdown.value = localStorage.getItem(`selectedStage_${candidate.requested_candidate_id}`) || candidate.stage_of_interview;
+                timingInput.value = localStorage.getItem(`selectedTiming_${candidate.requested_candidate_id}`) || '';
+
+                // Event listeners to update localStorage on dropdown and input change
+                typeDropdown.addEventListener('change', function () {
+                    localStorage.setItem(`selectedType_${candidate.requested_candidate_id}`, this.value);
+                });
+
+                modeDropdown.addEventListener('change', function () {
+                    localStorage.setItem(`selectedMode_${candidate.requested_candidate_id}`, this.value);
+                });
+
+                stageDropdown.addEventListener('change', function () {
+                    localStorage.setItem(`selectedStage_${candidate.requested_candidate_id}`, this.value);
+                });
+
+                timingInput.addEventListener('change', function () {
+                    localStorage.setItem(`selectedTiming_${candidate.requested_candidate_id}`, this.value);
+                });
+
+                // Event listener for scheduling button click
+                const scheduleButton = row.querySelector('.schedule-button');
+                scheduleButton.addEventListener('click', function () {
+                    const candidateId = this.getAttribute('data-candidate-id');
+                    const typeOfInterview = typeDropdown.value;
+                    const modeOfInterview = modeDropdown.value;
+                    const stageOfInterview = stageDropdown.value;
+                    const timingOfInterview = timingInput.value;
+                    const interviewerName = row.querySelector('.interviewer-name').textContent.trim();
+
+                    scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName);
+                });
+
+                return row;
+            }
+
+            // Function to schedule an interview via API call
+            function scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName) {
+                fetch(`http://localhost:3003/requested_candidates/${candidateId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type_of_interview: typeOfInterview,
+                        mode_of_interview: modeOfInterview,
+                        stage_of_interview: stageOfInterview,
+                        scheduled_interview_timing: timingOfInterview,
+                        interviewer_name: interviewerName
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to schedule candidate interview.');
+                    }
+                    return response.json();
+                })
+                .then(updatedCandidate => {
+                    console.log('Candidate interview scheduled successfully:', updatedCandidate);
+                    alert('Candidate interview scheduled successfully');
+                    updateTableRow(updatedCandidate);
+                })
+                .catch(error => {
+                    console.error('Error scheduling candidate interview:', error);
+                    alert('Failed to schedule candidate interview');
+                });
+            }
+
+            // Function to update table row after scheduling
+            function updateTableRow(updatedCandidate) {
+                const rows = document.querySelectorAll('#interviewData tr');
+
+                rows.forEach(row => {
+                    const candidateId = row.querySelector('.schedule-button').getAttribute('data-candidate-id');
+                    if (candidateId === updatedCandidate.requested_candidate_id) {
+                        row.querySelector('.type-of-interview select').value = updatedCandidate.type_of_interview;
+                        row.querySelector('.mode-of-interview select').value = updatedCandidate.mode_of_interview;
+                        row.querySelector('.stage-of-interview select').value = updatedCandidate.stage_of_interview;
+                        row.querySelector('.timing-of-interview input').value = updatedCandidate.scheduled_interview_timing;
+                        row.querySelector('.interviewer-name').textContent = updatedCandidate.interviewer_name;
+                        row.classList.add('updated-row');
+                    }
+                });
+            }
+
+            // Function to fetch requested candidates from API
+            function fetchRequestedCandidates() {
+                fetch('http://localhost:3003/requested_candidates')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch requested candidates.');
+                        }
+                        return response.json();
+                    })
+                    .then(candidates => {
+                        candidates.forEach(candidate => {
+                            const row = createCandidateRow(candidate);
+                            interviewTableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching requested candidates:', error));
+            }
+
+            // Function to filter candidates by any column value
+            function filterCandidates() {
+                const filterValue = searchInput.value.trim().toLowerCase();
+                const rows = interviewTableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    let found = false;
+                    row.querySelectorAll('td').forEach(cell => {
+                        const cellText = cell.textContent.toLowerCase();
+                        if (cellText.includes(filterValue)) {
+                            found = true;
+                        }
+                    });
+
+                    if (found) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            function refreshTable() {
+                // Clear existing rows
+                interviewTableBody.innerHTML = '';
+                // Fetch new data
+                fetchRequestedCandidates();
+            }
+
+            searchButton.addEventListener('click', filterCandidates);
+
+            searchInput.addEventListener('keyup', filterCandidates);
+
+            refreshButton.addEventListener('click', refreshTable);
+
+            fetchRequestedCandidates();
+        });
+    </script>
+</body>
+</html>

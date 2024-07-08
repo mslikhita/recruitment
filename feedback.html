@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Status - Scheduled Interviews</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333333; /* Dark text color */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items from the top */
+            min-height: 100vh; /* Full viewport height */
+            min-width: 100vw; /* Full viewport width */
+        }
+
+        .container {
+            width: 100%;
+            padding: 34px; /* Increased padding for better spacing */
+            background-color: #ffffff; /* White background */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-top: 20px; /* Adjusted margin-top */
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333333; /* Dark text color */
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-x: auto; /* Enable horizontal scrolling */
+        }
+
+        thead {
+            background-color: #1f2333; /* Dark header background */
+            color: #ffffff; /* White text color */
+        }
+
+        thead th {
+            padding: 15px;
+            font-size: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #283e51; /* Dark bottom border */
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        tbody tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        .status-dropdown {
+            appearance: none; /* Remove default appearance */
+            -webkit-appearance: none; /* Safari and Chrome */
+            -moz-appearance: none; /* Firefox */
+            background-color: #f0f0f0; /* Light gray background */
+            border: 1px solid #ccc; /* Gray border */
+            padding: 8px 12px; /* Padding inside the dropdown */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor */
+            font-size: 14px; /* Font size */
+            color: #333; /* Text color */
+        }
+
+        .status-dropdown option {
+            background-color: #fff; /* White background for options */
+            color: #333; /* Text color */
+        }
+
+        /* Hover and focus styles */
+        .status-dropdown:hover,
+        .status-dropdown:focus {
+            border-color: #007BFF; /* Border color on hover/focus */
+        }
+
+        /* Selected option style */
+        .status-dropdown option:checked {
+            background-color: #007BFF; /* Selected background color */
+            color: #fff; /* Selected text color */
+        }
+
+        .submit-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #1527ca;
+        }
+
+        /* Remove outline on focus */
+        td[contenteditable="true"]:focus {
+            outline: none; /* Remove outline completely */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Candidate-Interview Status</h1>
+        <div style="overflow-x:auto;">
+            <table id="feedbackTable">
+                <thead>
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Candidate Email</th>
+                        <th>Type of Interview</th>
+                        <th>Mode of Interview</th>
+                        <th>Stage</th>
+                        <th>Timing</th>
+                        <th>Interviewer Name</th>
+                        <th>Status</th>
+                        <th>Feedback</th>
+                        <th>Score</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="feedbackData">
+                    <!-- Data will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const feedbackTableBody = document.getElementById('feedbackData');
+
+            function updateCandidateFeedback(interview) {
+                const requestedCandidateId = interview.requested_candidate_id;
+
+                const row = feedbackTableBody.querySelector(`tr[data-requested-candidate-id="${requestedCandidateId}"]`);
+                if (row) {
+                    row.querySelector('td:nth-child(8) select').value = interview.status || '';
+                    row.querySelector('td:nth-child(9)').textContent = interview.feedback || '';
+                    row.querySelector('td:nth-child(10)').textContent = interview.score || '';
+                }
+            }
+
+            function fetchInterviews() {
+                fetch('http://localhost:3003/requested_candidates')
+                    .then(response => response.json())
+                    .then(interviews => {
+                        interviews.forEach(interview => {
+                            const row = createInterviewRow(interview);
+                            feedbackTableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching requested candidates:', error));
+            }
+
+            function createInterviewRow(interview) {
+                const row = document.createElement('tr');
+                const requestedCandidateId = interview.requested_candidate_id;
+
+                row.dataset.requestedCandidateId = requestedCandidateId; // Set dataset attribute for identification
+
+                row.innerHTML = `
+                    <td>${interview.candidate_name}</td>
+                    <td>${interview.candidate_email}</td>
+                    <td>${interview.type_of_interview}</td>
+                    <td>${interview.mode_of_interview}</td>
+                    <td>${interview.stage_of_interview}</td>
+                    <td>${interview.scheduled_interview_timing}</td>
+                    <td>${interview.interviewer_name}</td>
+                    <td>
+                        <select class="status-dropdown" data-requested-candidate-id="${requestedCandidateId}">
+                            <option value="selected" ${interview.status === 'selected' ? 'selected' : ''}>Selected</option>
+                            <option value="rejected" ${interview.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+                    </td>
+                    <td contenteditable="true" id="feedback-${requestedCandidateId}">${localStorage.getItem(`feedback-${requestedCandidateId}`) || interview.feedback || ''}</td>
+                    <td contenteditable="true" id="score-${requestedCandidateId}">${localStorage.getItem(`score-${requestedCandidateId}`) || interview.score || ''}</td>
+                    <td><button class="submit-button" data-requested-candidate-id="${requestedCandidateId}">Submit</button></td>
+                `;
+
+                const submitButton = row.querySelector('.submit-button');
+                submitButton.addEventListener('click', function () {
+                    const selectedStatus = row.querySelector('.status-dropdown').value;
+                    const feedbackElem = row.querySelector(`#feedback-${requestedCandidateId}`);
+                    const scoreElem = row.querySelector(`#score-${requestedCandidateId}`);
+
+                    const feedback = feedbackElem.textContent.trim();
+                    const score = scoreElem.textContent.trim();
+
+                    const scoreNum = parseInt(score);
+                    if (isNaN(scoreNum) || scoreNum < 1 || scoreNum > 10) {
+                        alert('Score must be a number between 1 and 10.');
+                        return;
+                    }
+
+                    const data = {
+                        feedback: feedback,
+                        score: scoreNum,
+                        status: selectedStatus,
+                    };
+
+                    fetch(`http://localhost:3003/requested_candidates/${requestedCandidateId}/feedback`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(result => {
+                            console.log('Backend response:', result);
+                            updateCandidateFeedback(result); // Update the UI with the updated data
+                            alert('Feedback score and status updated successfully!');
+                            // Update localStorage with new values
+                            localStorage.setItem(`feedback-${requestedCandidateId}`, feedback);
+                            localStorage.setItem(`score-${requestedCandidateId}`, score);
+                            localStorage.setItem(`status-${requestedCandidateId}`, selectedStatus); // Store selected status
+                        })
+                        .catch(error => {
+                            console.error('Error updating feedback and score:', error);
+                            alert('Failed to update feedback score and status. Please try again.');
+                        });
+                });
+
+                // Set initial dropdown value from localStorage if available
+                const storedStatus = localStorage.getItem(`status-${requestedCandidateId}`);
+                if (storedStatus) {
+                    row.querySelector('.status-dropdown').value = storedStatus;
+                }
+
+                return row;
+            }
+
+            fetchInterviews();
+        });
+    </script>
+</body>
+</html>

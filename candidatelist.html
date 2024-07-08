@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate List</title>
+    <link rel="stylesheet" href="candidatelist.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="candidateList" class="middle-top">
+        <h1>List of Candidates</h1>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter search keyword" />
+            <button onclick="applySearch()" id="searchButton"><i class="fas fa-search"></i></button>
+            <button onclick="refreshCandidates()" id="refreshButton"><i class="fas fa-sync-alt"></i></button> <!-- Refresh button -->
+        </div>
+        <div class="table-wrapper">
+        <table id="candidateTable">
+            <thead>
+                <tr>
+                    <th> Name</th>
+                    <th>Email</th>
+                    <th> Mobile Number</th>
+                    <th> Experience</th>
+                    <th>Job Portal</th>
+                    <th> Referred By</th>
+                    <th>Resume</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="candidateBody"></tbody>
+        </table>
+        <div class="pagination" id="paginationControls"></div>
+    </div>
+
+    <script>
+        let candidates = [];
+        let filteredCandidates = []; // Array to hold filtered candidates
+        const itemsPerPage = 4;
+        let currentPage = 1;
+        let searchColumn = 'candidate_name'; // Default search column
+
+        async function fetchCandidates() {
+            try {
+                const response = await fetch("http://localhost:3005/candidates");
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch candidates: ${response.status} ${response.statusText}`);
+                }
+                const data = await response.json();
+                candidates = data;
+                filteredCandidates = candidates; // Initialize filtered candidates with all candidates
+                displayCandidates();
+            } catch (error) {
+                console.error('Error fetching candidates:', error);
+            }
+        }
+
+        function renderPagination(totalItems) {
+            const paginationControls = document.getElementById('paginationControls');
+            paginationControls.innerHTML = '';
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.disabled = currentPage === 1;
+            prevButton.className = currentPage === 1 ? 'disabled' : '';
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayCandidates();
+                }
+            });
+            paginationControls.appendChild(prevButton);
+
+            // Page number buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.className = i === currentPage ? 'active' : '';
+                button.disabled = i === currentPage;
+                button.addEventListener('click', () => {
+                    currentPage = i;
+                    displayCandidates();
+                });
+                paginationControls.appendChild(button);
+            }
+
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.className = currentPage === totalPages ? 'disabled' : '';
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayCandidates();
+                }
+            });
+            paginationControls.appendChild(nextButton);
+        }
+
+        function displayCandidates() {
+            const candidateBody = document.getElementById('candidateBody');
+            candidateBody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedCandidates = filteredCandidates.slice(startIndex, endIndex);
+
+            paginatedCandidates.forEach(candidate => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${candidate.candidate_name}</td>
+                    <td>${candidate.candidate_email}</td>
+                    <td>${candidate.mobile_no}</td>
+                    <td>${candidate.experience}</td>
+                    <td>${candidate.job_portal}</td>
+                    <td>${candidate.refered_by}</td>
+                    <td>
+                        <a href="#" onclick="viewResume('${candidate.candidate_id}')">View Resume</a>
+                    </td>
+                    <td>
+                        <button onclick="deleteCandidate('${candidate.candidate_id}')">Delete</button>
+                    </td>
+                `;
+                candidateBody.appendChild(row);
+            });
+
+            renderPagination(filteredCandidates.length);
+        }
+
+        function applyFilters() {
+    const filterValue = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    filteredCandidates = candidates.filter(candidate => {
+        return Object.values(candidate).some(fieldValue => {
+            if (typeof fieldValue === 'string') {
+                return fieldValue.toLowerCase().includes(filterValue);
+            } else if (typeof fieldValue === 'number') {
+                return fieldValue.toString().includes(filterValue);
+            } else {
+                return false;
+            }
+        });
+    });
+
+    currentPage = 1;
+    displayCandidates();
+}
+
+        function applySearch() {
+            applyFilters();
+        }
+
+        function refreshCandidates() {
+            document.getElementById('searchInput').value = ''; 
+            filteredCandidates = candidates;
+            currentPage = 1; 
+            displayCandidates(); 
+        }
+
+        async function viewResume(candidateId) {
+            try {
+                const response = await fetch(`http://localhost:3005/candidates/${candidateId}/resume`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch resume: ${response.status} ${response.statusText}`);
+                }
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+
+                const newTab = window.open(url, '_blank');
+                if (!newTab) {
+                    throw new Error('Failed to open PDF in a new tab. Please check your browser settings.');
+                }
+            } catch (error) {
+                console.error('Error viewing resume:', error);
+                alert('Failed to view resume. Please try again later.');
+            }
+        }
+
+        async function deleteCandidate(candidateId) {
+            try {
+                const response = await fetch(`http://localhost:3005/candidate/${candidateId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to delete candidate');
+                }
+                console.log(`Deleted candidate: ${candidateId}`);
+                candidates = candidates.filter(candidate => candidate.candidate_id !== candidateId);
+                applyFilters();
+            } catch (error) {
+                console.error('Error deleting candidate:', error);
+                alert('Failed to delete candidate. Please try again later.');
+            }
+        }
+
+        fetchCandidates();
+    </script>
+</body>
+</html>
