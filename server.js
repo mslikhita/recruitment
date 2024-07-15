@@ -948,48 +948,145 @@ app.put('/requested_candidates/:id', (req, res) => {
 });
 
 // Function to send email using Nodemailer (returns a Promise for async handling)
-function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming) {
+function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, mode_of_interview, type_of_interview, additional_info, meetingLink) {
   return new Promise((resolve, reject) => {
-    const nodemailer = require('nodemailer');
+    // Fetch sender's email (assuming it's stored in 'ud' table)
+    const fetchSenderEmailQuery = `
+      SELECT username AS senderEmail
+      FROM ud
+      WHERE role = 'recruiter' -- Adjust as per your application logic
+      LIMIT 1
+    `;
 
-    let transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'newjobrequesttest@gmail.com', // Your email address
-        pass: 'hjtyghzwngmvmwpq' // Your email password
+    // Fetch candidate's resume from the database
+    const fetchCandidateResumeQuery = `
+      SELECT resume
+      FROM candidate
+      WHERE candidate_email = ?
+    `;
+
+    // Execute queries sequentially
+    db.query(fetchSenderEmailQuery, (err, senderEmailResult) => {
+      if (err) {
+        console.error('Error fetching sender email:', err);
+        reject(err); // Reject promise on error
+        return;
       }
-    });
 
-    let mailOptionsCandidate = {
-      from: 'newjobrequesttest@gmail.com',
-      to: candidateEmail,
-      subject: 'Interview Scheduled',
-      text: `Your interview has been scheduled for ${scheduledInterviewTiming}.`
-    };
+      // Extract sender's email from the query result
+      const senderEmail = senderEmailResult[0].senderEmail;
 
-    let mailOptionsInterviewer = {
-      from: 'newjobrequesttest@gmail.com',
-      to: interviewerEmail,
-      subject: 'Interview Scheduled',
-      text: `You have an interview scheduled with the candidate for ${scheduledInterviewTiming}.`
-    };
+      // Fetch candidate's resume
+      db.query(fetchCandidateResumeQuery, [candidateEmail], (err, resumeResult) => {
+        if (err) {
+          console.error('Error fetching candidate resume:', err);
+          reject(err); // Reject promise on error
+          return;
+        }
 
-    // Sending emails in parallel
-    Promise.all([
-      transporter.sendMail(mailOptionsCandidate),
-      transporter.sendMail(mailOptionsInterviewer)
-    ])
-      .then(() => {
-        console.log('Emails sent successfully.');
-        resolve();
-      })
-      .catch((error) => {
-        console.error('Failed to send emails:', error);
-        reject(error);
+        // Prepare variables for resume attachment
+        let resumeAttachment = null;
+        let resumeFileName = '';
+
+        // If resume found, prepare attachment
+        if (resumeResult && resumeResult.length > 0) {
+          const resume = resumeResult[0].resume;
+
+          // Assuming 'resume' field contains base64 encoded resume data
+          resumeAttachment = {
+            filename: `resume.${resume}`,
+            content: Buffer.from(resume, 'base64'),
+          };
+          resumeFileName = `resume.${resume}`;
+        }
+
+        // Initialize Nodemailer transporter using SMTP or other service
+        let transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'newjobrequesttest@gmail.com', // Your email address
+            pass: 'hjtyghzwngmvmwpq' // Your email password
+          }
+        });
+
+        // Email options for candidate
+        let mailOptionsCandidate = {
+          from: 'newjobrequesttest@gmail.com',
+          to: candidateEmail,
+          subject: 'Interview Scheduled',
+          text: `Dear Candidate,
+
+I hope this message finds you well.
+
+I am writing to inform you that an interview has been scheduled with the following details:
+
+Date and Time: ${scheduledInterviewTiming}
+Mode: ${mode_of_interview}
+Type: ${type_of_interview}
+${type_of_interview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${additional_info || meetingLink} 
+
+Please confirm your availability for this interview. If you are unable to attend at this time, please let us know so we can arrange an alternative.
+
+If you have any questions or need further information, please feel free to contact me at [Your Contact Information].
+
+Best regards,
+Samartha InfoSolutions Pvt Ltd.
+`,
+        };
+
+        // Email options for interviewer
+        let mailOptionsInterviewer = {
+          from: 'newjobrequesttest@gmail.com',
+          to: interviewerEmail,
+          subject: 'Interview Scheduled',
+          text: `Dear Interviewer,
+
+I hope this message finds you well.
+
+I have scheduled an interview with a candidate for the position. The details are as follows:
+
+Candidate Email: ${candidateEmail}
+Date and Time: ${scheduledInterviewTiming}
+Format: ${mode_of_interview}
+Type: ${type_of_interview}
+${type_of_interview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${additional_info || meetingLink} 
+
+Attached candidate resume for reference:
+${resumeFileName ? `Filename: ${resumeFileName}` : 'No resume attached'}
+
+If you have any specific instructions or questions regarding the interview, please let me know.
+
+Thank you for your cooperation.
+
+Best regards,
+Samartha InfoSolutions Pvt Ltd.
+`,
+          attachments: [
+            resumeAttachment // Attach candidate's resume
+          ]
+        };
+
+        // Sending emails in parallel
+        Promise.all([
+          transporter.sendMail(mailOptionsCandidate),
+          transporter.sendMail(mailOptionsInterviewer)
+        ])
+          .then(() => {
+            console.log('Emails sent successfully.');
+            resolve(); // Resolve promise when emails are sent successfully
+          })
+          .catch((error) => {
+            console.error('Failed to send emails:', error);
+            reject(error); // Reject promise if there is an error sending emails
+          });
       });
+    });
   });
 }
 
+module.exports = {
+  sendEmail
+};
 // Route to update feedback score and status of requested candidate
 app.put('/requested_candidates/:id/feedback', (req, res) => {
   const requestedCandidateId = req.params.id;
