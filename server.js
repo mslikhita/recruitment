@@ -958,7 +958,21 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
       LIMIT 1
     `;
 
-    // Fetch candidate's resume from the database
+    // Fetch candidate details to get candidate_name
+    const fetchCandidateDetailsQuery = `
+      SELECT candidate_name
+      FROM candidate
+      WHERE candidate_email = ?
+    `;
+
+    // Fetch interviewer details to get interviewer_name
+    const fetchInterviewerDetailsQuery = `
+      SELECT ename AS interviewer_name
+      FROM ud
+      WHERE username = ?
+    `;
+
+    // Fetch candidate's resume
     const fetchCandidateResumeQuery = `
       SELECT resume
       FROM candidate
@@ -976,45 +990,67 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
       // Extract sender's email from the query result
       const senderEmail = senderEmailResult[0].senderEmail;
 
-      // Fetch candidate's resume
-      db.query(fetchCandidateResumeQuery, [candidateEmail], (err, resumeResult) => {
+      // Fetch candidate name
+      db.query(fetchCandidateDetailsQuery, [candidateEmail], (err, candidateResult) => {
         if (err) {
-          console.error('Error fetching candidate resume:', err);
+          console.error('Error fetching candidate details:', err);
           reject(err); // Reject promise on error
           return;
         }
 
-        // Prepare variables for resume attachment
-        let resumeAttachment = null;
-        let resumeFileName = '';
+        // Extract candidate name from the query result
+        const candidateName = candidateResult[0].candidate_name;
 
-        // If resume found, prepare attachment
-        if (resumeResult && resumeResult.length > 0) {
-          const resume = resumeResult[0].resume;
-
-          // Assuming 'resume' field contains base64 encoded resume data
-          resumeAttachment = {
-            filename: `resume.${resume}`,
-            content: Buffer.from(resume, 'base64'),
-          };
-          resumeFileName = `resume.${resume}`;
-        }
-
-        // Initialize Nodemailer transporter using SMTP or other service
-        let transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: 'newjobrequesttest@gmail.com', // Your email address
-            pass: 'hjtyghzwngmvmwpq' // Your email password
+        // Fetch interviewer name
+        db.query(fetchInterviewerDetailsQuery, [interviewerEmail], (err, interviewerResult) => {
+          if (err) {
+            console.error('Error fetching interviewer details:', err);
+            reject(err); // Reject promise on error
+            return;
           }
-        });
 
-        // Email options for candidate
-        let mailOptionsCandidate = {
-          from: 'newjobrequesttest@gmail.com',
-          to: candidateEmail,
-          subject: 'Interview Scheduled',
-          text: `Dear Candidate,
+          // Extract interviewer name from the query result
+          const interviewerName = interviewerResult[0].interviewer_name;
+
+          // Fetch candidate's resume
+          db.query(fetchCandidateResumeQuery, [candidateEmail], (err, resumeResult) => {
+            if (err) {
+              console.error('Error fetching candidate resume:', err);
+              reject(err); // Reject promise on error
+              return;
+            }
+
+            // Prepare variables for resume attachment
+            let resumeAttachment = null;
+            let resumeFileName = '';
+
+            // If resume found, prepare attachment
+            if (resumeResult && resumeResult.length > 0) {
+              const resume = resumeResult[0].resume;
+
+              // Assuming 'resume' field contains base64 encoded resume data
+              resumeAttachment = {
+                filename: `resume.${resume}`,
+                content: Buffer.from(resume, 'base64'),
+              };
+              resumeFileName = `resume.${resume}`;
+            }
+
+            // Initialize Nodemailer transporter using SMTP or other service
+            let transporter = nodemailer.createTransport({
+              service: 'gmail',
+              auth: {
+                user: 'newjobrequesttest@gmail.com', // Your email address
+                pass: 'hjtyghzwngmvmwpq' // Your email password
+              }
+            });
+
+            // Email options for candidate
+            let mailOptionsCandidate = {
+              from: 'newjobrequesttest@gmail.com',
+              to: candidateEmail,
+              subject: 'Interview Scheduled',
+              text: `Dear ${candidateName},
 
 I hope this message finds you well.
 
@@ -1032,20 +1068,19 @@ If you have any questions or need further information, please feel free to conta
 Best regards,
 Samartha InfoSolutions Pvt Ltd.
 `,
-        };
+            };
 
-        // Email options for interviewer
-        let mailOptionsInterviewer = {
-          from: 'newjobrequesttest@gmail.com',
-          to: interviewerEmail,
-          subject: 'Interview Scheduled',
-          text: `Dear Interviewer,
+            // Email options for interviewer
+            let mailOptionsInterviewer = {
+              from: 'newjobrequesttest@gmail.com',
+              to: interviewerEmail,
+              subject: 'Interview Scheduled',
+              text: `Dear ${interviewerName},
 
 I hope this message finds you well.
 
-I have scheduled an interview with a candidate for the position. The details are as follows:
+I have scheduled an interview with a ${candidateName}. The details are as follows:
 
-Candidate Email: ${candidateEmail}
 Date and Time: ${scheduledInterviewTiming}
 Format: ${mode_of_interview}
 Type: ${type_of_interview}
@@ -1061,32 +1096,31 @@ Thank you for your cooperation.
 Best regards,
 Samartha InfoSolutions Pvt Ltd.
 `,
-          attachments: [
-            resumeAttachment // Attach candidate's resume
-          ]
-        };
+              attachments: [
+                resumeAttachment // Attach candidate's resume
+              ]
+            };
 
-        // Sending emails in parallel
-        Promise.all([
-          transporter.sendMail(mailOptionsCandidate),
-          transporter.sendMail(mailOptionsInterviewer)
-        ])
-          .then(() => {
-            console.log('Emails sent successfully.');
-            resolve(); // Resolve promise when emails are sent successfully
-          })
-          .catch((error) => {
-            console.error('Failed to send emails:', error);
-            reject(error); // Reject promise if there is an error sending emails
+            // Sending emails in parallel
+            Promise.all([
+              transporter.sendMail(mailOptionsCandidate),
+              transporter.sendMail(mailOptionsInterviewer)
+            ])
+              .then(() => {
+                console.log('Emails sent successfully.');
+                resolve(); // Resolve promise when emails are sent successfully
+              })
+              .catch((error) => {
+                console.error('Failed to send emails:', error);
+                reject(error); // Reject promise if there is an error sending emails
+              });
           });
+        });
       });
     });
   });
 }
 
-module.exports = {
-  sendEmail
-};
 // Route to update feedback score and status of requested candidate
 app.put('/requested_candidates/:id/feedback', (req, res) => {
   const requestedCandidateId = req.params.id;
