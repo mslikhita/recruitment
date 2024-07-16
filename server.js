@@ -896,11 +896,12 @@ app.put('/requested_candidates/:id', (req, res) => {
       return res.status(500).json({ error: 'Failed to update requested candidate.' });
     }
 
-    // Fetch candidate details to get candidate_email
+    // Fetch candidate details to get candidate_email, mode_of_interview, type_of_interview
     const fetchCandidateDetailsQuery = `
-      SELECT candidate_email
-      FROM candidate
-      WHERE candidate_id = (SELECT candidate_id FROM requested_candidate WHERE requested_candidate_id = ?)
+      SELECT c.candidate_email, rc.scheduled_interview_timing, rc.mode_of_interview, rc.type_of_interview
+      FROM candidate c
+      INNER JOIN requested_candidate rc ON c.candidate_id = rc.candidate_id
+      WHERE rc.requested_candidate_id = ?
     `;
     db.query(fetchCandidateDetailsQuery, [requestedCandidateId], (err, candidateResult) => {
       if (err) {
@@ -912,10 +913,10 @@ app.put('/requested_candidates/:id', (req, res) => {
         return res.status(404).json({ error: 'Candidate not found.' });
       }
 
-      const candidateEmail = candidateResult[0].candidate_email;
+      const { candidate_email, scheduled_interview_timing, mode_of_interview, type_of_interview } = candidateResult[0];
 
       const fetchInterviewerDetailsQuery = `
-        SELECT username
+        SELECT username AS interviewer_email
         FROM ud
         WHERE ename = ?
       `;
@@ -930,10 +931,10 @@ app.put('/requested_candidates/:id', (req, res) => {
           return res.status(404).json({ error: 'Interviewer not found.' });
         }
 
-        const interviewerEmail = interviewerResult[0].username; // Use username here
+        const interviewerEmail = interviewerResult[0].interviewer_email; // Use interviewer_email here
 
         // Send email notifications to candidate and interviewer simultaneously
-        sendEmail(candidateEmail, interviewerEmail, scheduled_interview_timing)
+        sendEmail(candidate_email, interviewerEmail, scheduled_interview_timing, mode_of_interview, type_of_interview)
           .then(() => {
             // Respond with success message
             res.json({ message: 'Requested candidate updated successfully.' });
@@ -948,7 +949,7 @@ app.put('/requested_candidates/:id', (req, res) => {
 });
 
 // Function to send email using Nodemailer (returns a Promise for async handling)
-function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, mode_of_interview, type_of_interview, additional_info, meetingLink) {
+function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, mode_of_interview, type_of_interview) {
   return new Promise((resolve, reject) => {
     // Fetch sender's email (assuming it's stored in 'ud' table)
     const fetchSenderEmailQuery = `
@@ -990,7 +991,7 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
       // Extract sender's email from the query result
       const senderEmail = senderEmailResult[0].senderEmail;
 
-      // Fetch candidate name
+      // Fetch candidate details
       db.query(fetchCandidateDetailsQuery, [candidateEmail], (err, candidateResult) => {
         if (err) {
           console.error('Error fetching candidate details:', err);
@@ -998,10 +999,14 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
           return;
         }
 
-        // Extract candidate name from the query result
-        const candidateName = candidateResult[0].candidate_name;
+        if (candidateResult.length === 0) {
+          reject(new Error('Candidate not found.'));
+          return;
+        }
 
-        // Fetch interviewer name
+        const candidate_name = candidateResult[0].candidate_name;
+
+        // Fetch interviewer details
         db.query(fetchInterviewerDetailsQuery, [interviewerEmail], (err, interviewerResult) => {
           if (err) {
             console.error('Error fetching interviewer details:', err);
@@ -1009,8 +1014,12 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
             return;
           }
 
-          // Extract interviewer name from the query result
-          const interviewerName = interviewerResult[0].interviewer_name;
+          if (interviewerResult.length === 0) {
+            reject(new Error('Interviewer not found.'));
+            return;
+          }
+
+          const interviewer_name = interviewerResult[0].interviewer_name;
 
           // Fetch candidate's resume
           db.query(fetchCandidateResumeQuery, [candidateEmail], (err, resumeResult) => {
@@ -1027,13 +1036,12 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
             // If resume found, prepare attachment
             if (resumeResult && resumeResult.length > 0) {
               const resume = resumeResult[0].resume;
-
               // Assuming 'resume' field contains base64 encoded resume data
               resumeAttachment = {
-                filename: `resume.${resume}`,
+                filename: `resume.${resume}`, // Adjust filename as per your application logic
                 content: Buffer.from(resume, 'base64'),
               };
-              resumeFileName = `resume.${resume}`;
+              resumeFileName = `resume.${resume}`; // Adjust filename as per your application logic
             }
 
             // Initialize Nodemailer transporter using SMTP or other service
@@ -1050,7 +1058,7 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
               from: 'newjobrequesttest@gmail.com',
               to: candidateEmail,
               subject: 'Interview Scheduled',
-              text: `Dear ${candidateName},
+              text: `Dear ${candidate_name},
 
 I hope this message finds you well.
 
@@ -1059,7 +1067,7 @@ I am writing to inform you that an interview has been scheduled with the followi
 Date and Time: ${scheduledInterviewTiming}
 Mode: ${mode_of_interview}
 Type: ${type_of_interview}
-${type_of_interview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${additional_info || meetingLink} 
+${type_of_interview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${type_of_interview === 'Face to Face' ? 'Add Location Here' : 'Add Meeting Link Here'}
 
 Please confirm your availability for this interview. If you are unable to attend at this time, please let us know so we can arrange an alternative.
 
@@ -1068,6 +1076,9 @@ If you have any questions or need further information, please feel free to conta
 Best regards,
 Samartha InfoSolutions Pvt Ltd.
 `,
+              attachments: [
+                resumeAttachment // Attach candidate's resume if available
+              ]
             };
 
             // Email options for interviewer
@@ -1075,19 +1086,16 @@ Samartha InfoSolutions Pvt Ltd.
               from: 'newjobrequesttest@gmail.com',
               to: interviewerEmail,
               subject: 'Interview Scheduled',
-              text: `Dear ${interviewerName},
+              text: `Dear ${interviewer_name},
 
 I hope this message finds you well.
 
-I have scheduled an interview with a ${candidateName}. The details are as follows:
+I have scheduled an interview for the candidate ${candidate_name}. The details are as follows:
 
 Date and Time: ${scheduledInterviewTiming}
-Format: ${mode_of_interview}
+Mode: ${mode_of_interview}
 Type: ${type_of_interview}
-${type_of_interview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${additional_info || meetingLink} 
-
-Attached candidate resume for reference:
-${resumeFileName ? `Filename: ${resumeFileName}` : 'No resume attached'}
+${type_of_interview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${type_of_interview === 'Face to Face' ? 'Add Location Here' : 'Add Meeting Link Here'}
 
 If you have any specific instructions or questions regarding the interview, please let me know.
 
@@ -1097,7 +1105,7 @@ Best regards,
 Samartha InfoSolutions Pvt Ltd.
 `,
               attachments: [
-                resumeAttachment // Attach candidate's resume
+                resumeAttachment // Attach candidate's resume if available
               ]
             };
 
@@ -1120,6 +1128,7 @@ Samartha InfoSolutions Pvt Ltd.
     });
   });
 }
+
 
 // Route to update feedback score and status of requested candidate
 app.put('/requested_candidates/:id/feedback', (req, res) => {
