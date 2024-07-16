@@ -876,7 +876,7 @@ app.get('/requested_candidates', (req, res) => {
 // Route to update requested candidate details
 app.put('/requested_candidates/:id', (req, res) => {
   const requestedCandidateId = req.params.id;
-  const { type_of_interview, mode_of_interview, stage_of_interview, interviewer_name, scheduled_interview_timing } = req.body;
+  const { type_of_interview, mode_of_interview, stage_of_interview, interviewer_name, scheduled_interview_timing, additionalDetails } = req.body;
 
   // Check if compulsory fields are provided
   if (!type_of_interview || !mode_of_interview || !stage_of_interview || !scheduled_interview_timing || !interviewer_name) {
@@ -934,7 +934,7 @@ app.put('/requested_candidates/:id', (req, res) => {
         const interviewerEmail = interviewerResult[0].interviewer_email; // Use interviewer_email here
 
         // Send email notifications to candidate and interviewer simultaneously
-        sendEmail(candidate_email, interviewerEmail, scheduled_interview_timing, mode_of_interview, type_of_interview)
+        sendEmail(candidate_email, interviewerEmail, scheduled_interview_timing, mode_of_interview, type_of_interview, additionalDetails)
           .then(() => {
             // Respond with success message
             res.json({ message: 'Requested candidate updated successfully.' });
@@ -948,8 +948,7 @@ app.put('/requested_candidates/:id', (req, res) => {
   });
 });
 
-// Function to send email using Nodemailer (returns a Promise for async handling)
-function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, mode_of_interview, type_of_interview) {
+function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, modeOfInterview, typeOfInterview, additionalDetails) {
   return new Promise((resolve, reject) => {
     // Fetch sender's email (assuming it's stored in 'ud' table)
     const fetchSenderEmailQuery = `
@@ -1004,7 +1003,7 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
           return;
         }
 
-        const candidate_name = candidateResult[0].candidate_name;
+        const candidateName = candidateResult[0].candidate_name;
 
         // Fetch interviewer details
         db.query(fetchInterviewerDetailsQuery, [interviewerEmail], (err, interviewerResult) => {
@@ -1019,7 +1018,7 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
             return;
           }
 
-          const interviewer_name = interviewerResult[0].interviewer_name;
+          const interviewerName = interviewerResult[0].interviewer_name;
 
           // Fetch candidate's resume
           db.query(fetchCandidateResumeQuery, [candidateEmail], (err, resumeResult) => {
@@ -1058,16 +1057,16 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
               from: 'newjobrequesttest@gmail.com',
               to: candidateEmail,
               subject: 'Interview Scheduled',
-              text: `Dear ${candidate_name},
+              text: `Dear ${candidateName},
 
 I hope this message finds you well.
 
 I am writing to inform you that an interview has been scheduled with the following details:
 
 Date and Time: ${scheduledInterviewTiming}
-Mode: ${mode_of_interview}
-Type: ${type_of_interview}
-${type_of_interview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${type_of_interview === 'Face to Face' ? 'Add Location Here' : 'Add Meeting Link Here'}
+Mode: ${modeOfInterview}
+Type: ${typeOfInterview}
+${additionalDetails}
 
 Please confirm your availability for this interview. If you are unable to attend at this time, please let us know so we can arrange an alternative.
 
@@ -1086,16 +1085,16 @@ Samartha InfoSolutions Pvt Ltd.
               from: 'newjobrequesttest@gmail.com',
               to: interviewerEmail,
               subject: 'Interview Scheduled',
-              text: `Dear ${interviewer_name},
+              text: `Dear ${interviewerName},
 
 I hope this message finds you well.
 
-I have scheduled an interview for the candidate ${candidate_name}. The details are as follows:
+I have scheduled an interview for the candidate ${candidateName}. The details are as follows:
 
 Date and Time: ${scheduledInterviewTiming}
-Mode: ${mode_of_interview}
-Type: ${type_of_interview}
-${type_of_interview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${type_of_interview === 'Face to Face' ? 'Add Location Here' : 'Add Meeting Link Here'}
+Mode: ${modeOfInterview}
+Type: ${typeOfInterview}
+${additionalDetails}
 
 If you have any specific instructions or questions regarding the interview, please let me know.
 
@@ -1114,20 +1113,21 @@ Samartha InfoSolutions Pvt Ltd.
               transporter.sendMail(mailOptionsCandidate),
               transporter.sendMail(mailOptionsInterviewer)
             ])
-              .then(() => {
-                console.log('Emails sent successfully.');
-                resolve(); // Resolve promise when emails are sent successfully
-              })
-              .catch((error) => {
-                console.error('Failed to send emails:', error);
-                reject(error); // Reject promise if there is an error sending emails
-              });
+            .then(() => {
+              console.log('Emails sent successfully.');
+              resolve(); // Resolve promise when emails are sent successfully
+            })
+            .catch((error) => {
+              console.error('Failed to send emails:', error);
+              reject(error); // Reject promise if there is an error sending emails
+            });
           });
         });
       });
     });
   });
 }
+
 
 
 // Route to update feedback score and status of requested candidate
