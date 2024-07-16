@@ -948,7 +948,7 @@ app.put('/requested_candidates/:id', (req, res) => {
   });
 });
 
-function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, modeOfInterview, typeOfInterview, additionalDetails) {
+function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, modeOfInterview, typeOfInterview, additional_info, meetingLink) {
   return new Promise((resolve, reject) => {
     // Fetch sender's email (assuming it's stored in 'ud' table)
     const fetchSenderEmailQuery = `
@@ -1052,6 +1052,18 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
               }
             });
 
+            // Determine interview detail label and value based on typeOfInterview
+            let interviewDetailLabel = '';
+            let interviewDetailValue = '';
+
+            if (typeOfInterview === 'Face to Face') {
+              interviewDetailLabel = 'Location';
+              interviewDetailValue = additional_info || ''; // Only assign additional_info if available
+            } else if (typeOfInterview === 'Video Interview') {
+              interviewDetailLabel = 'Meeting Link';
+              interviewDetailValue = meetingLink || ''; // Only assign meetingLink if available
+            }
+
             // Email options for candidate
             let mailOptionsCandidate = {
               from: 'newjobrequesttest@gmail.com',
@@ -1066,7 +1078,7 @@ I am writing to inform you that an interview has been scheduled with the followi
 Date and Time: ${scheduledInterviewTiming}
 Mode: ${modeOfInterview}
 Type: ${typeOfInterview}
-${additionalDetails}
+${interviewDetailLabel ? `${interviewDetailLabel}: ${interviewDetailValue}\n` : ''}
 
 Please confirm your availability for this interview. If you are unable to attend at this time, please let us know so we can arrange an alternative.
 
@@ -1094,7 +1106,7 @@ I have scheduled an interview for the candidate ${candidateName}. The details ar
 Date and Time: ${scheduledInterviewTiming}
 Mode: ${modeOfInterview}
 Type: ${typeOfInterview}
-${additionalDetails}
+${interviewDetailLabel ? `${interviewDetailLabel}: ${interviewDetailValue}\n` : ''}
 
 If you have any specific instructions or questions regarding the interview, please let me know.
 
@@ -1127,8 +1139,6 @@ Samartha InfoSolutions Pvt Ltd.
     });
   });
 }
-
-
 
 // Route to update feedback score and status of requested candidate
 app.put('/requested_candidates/:id/feedback', (req, res) => {
