@@ -873,29 +873,27 @@ app.get('/requested_candidates', (req, res) => {
   });
 });
 
-// Route to update requested candidate details
 app.put('/requested_candidates/:id', (req, res) => {
   const requestedCandidateId = req.params.id;
-  const { type_of_interview, mode_of_interview, stage_of_interview, interviewer_name, scheduled_interview_timing, additionalDetails } = req.body;
+  const { mode_of_interview, stage_of_interview, interviewer_name, scheduled_interview_timing } = req.body;
 
   // Check if compulsory fields are provided
-  if (!type_of_interview || !mode_of_interview || !stage_of_interview || !scheduled_interview_timing || !interviewer_name) {
-    return res.status(400).json({ error: 'Mandatory fields (type_of_interview, mode_of_interview, stage_of_interview, scheduled_interview_timing, interviewer_name) are required.' });
+  if (!mode_of_interview || !stage_of_interview || !scheduled_interview_timing || !interviewer_name) {
+    return res.status(400).json({ error: 'Mandatory fields (mode_of_interview, stage_of_interview, scheduled_interview_timing, interviewer_name) are required.' });
   }
 
   const sql = `
     UPDATE requested_candidate
-    SET type_of_interview = ?, mode_of_interview = ?, stage_of_interview = ?, scheduled_interview_timing = ?
+    SET mode_of_interview = ?, stage_of_interview = ?, scheduled_interview_timing = ?
     WHERE requested_candidate_id = ?
   `;
-  const values = [type_of_interview, mode_of_interview, stage_of_interview, scheduled_interview_timing, requestedCandidateId];
+  const values = [mode_of_interview, stage_of_interview, scheduled_interview_timing, requestedCandidateId];
 
   db.query(sql, values, (error, results) => {
     if (error) {
       console.error('Error updating requested candidate:', error);
       return res.status(500).json({ error: 'Failed to update requested candidate.' });
     }
-
     // Fetch candidate details to get candidate_email, mode_of_interview, type_of_interview
     const fetchCandidateDetailsQuery = `
       SELECT c.candidate_email, rc.scheduled_interview_timing, rc.mode_of_interview, rc.type_of_interview
@@ -934,22 +932,30 @@ app.put('/requested_candidates/:id', (req, res) => {
         const interviewerEmail = interviewerResult[0].interviewer_email; // Use interviewer_email here
 
         // Send email notifications to candidate and interviewer simultaneously
-        sendEmail(candidate_email, interviewerEmail, scheduled_interview_timing, mode_of_interview, type_of_interview, additionalDetails)
-          .then(() => {
-            // Respond with success message
+        sendEmail(candidate_email, interviewerEmail, scheduled_interview_timing, mode_of_interview, type_of_interview, req.body.additional_details)
+        .then(() => {
             res.json({ message: 'Requested candidate updated successfully.' });
-          })
-          .catch((error) => {
+        })
+        .catch((error) => {
             console.error('Failed to send emails:', error);
             res.status(500).json({ error: 'Failed to send email notifications.' });
-          });
+        });
       });
     });
   });
 });
 
-function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, modeOfInterview, typeOfInterview, additional_info, meetingLink) {
+function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, modeOfInterview, typeOfInterview, additionalDetails = null) {
   return new Promise((resolve, reject) => {
+    // Initialize Nodemailer transporter using SMTP or other service
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'newjobrequesttest@gmail.com', // Your email address
+        pass: 'hjtyghzwngmvmwpq' // Your email password
+      }
+    });
+
     // Fetch sender's email (assuming it's stored in 'ud' table)
     const fetchSenderEmailQuery = `
       SELECT username AS senderEmail
@@ -972,12 +978,21 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
       WHERE username = ?
     `;
 
+    const fetchtypeOfInterviewQuery = `
+  SELECT type_of_interview
+  FROM requested_candidate
+  WHERE scheduled_time = ?;
+`;
+
+
     // Fetch candidate's resume
     const fetchCandidateResumeQuery = `
       SELECT resume
       FROM candidate
       WHERE candidate_email = ?
     `;
+
+
 
     // Execute queries sequentially
     db.query(fetchSenderEmailQuery, (err, senderEmailResult) => {
@@ -1030,43 +1045,20 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
 
             // Prepare variables for resume attachment
             let resumeAttachment = null;
-            let resumeFileName = '';
 
             // If resume found, prepare attachment
             if (resumeResult && resumeResult.length > 0) {
               const resume = resumeResult[0].resume;
               // Assuming 'resume' field contains base64 encoded resume data
               resumeAttachment = {
-                filename: `resume.${resume}`, // Adjust filename as per your application logic
+                filename: `resume.pdf`, // Adjust filename as per your application logic
                 content: Buffer.from(resume, 'base64'),
               };
-              resumeFileName = `resume.${resume}`; // Adjust filename as per your application logic
             }
 
-            // Initialize Nodemailer transporter using SMTP or other service
-            let transporter = nodemailer.createTransport({
-              service: 'gmail',
-              auth: {
-                user: 'newjobrequesttest@gmail.com', // Your email address
-                pass: 'hjtyghzwngmvmwpq' // Your email password
-              }
-            });
-
-            // Determine interview detail label and value based on typeOfInterview
-            let interviewDetailLabel = '';
-            let interviewDetailValue = '';
-
-            if (typeOfInterview === 'Face to Face') {
-              interviewDetailLabel = 'Location';
-              interviewDetailValue = additional_info || ''; // Only assign additional_info if available
-            } else if (typeOfInterview === 'Video Interview') {
-              interviewDetailLabel = 'Meeting Link';
-              interviewDetailValue = meetingLink || ''; // Only assign meetingLink if available
-            }
-
-            // Email options for candidate
+            // Prepare email content based on type of interview
             let mailOptionsCandidate = {
-              from: 'newjobrequesttest@gmail.com',
+              from: senderEmail,
               to: candidateEmail,
               subject: 'Interview Scheduled',
               text: `Dear ${candidateName},
@@ -1078,7 +1070,8 @@ I am writing to inform you that an interview has been scheduled with the followi
 Date and Time: ${scheduledInterviewTiming}
 Mode: ${modeOfInterview}
 Type: ${typeOfInterview}
-${interviewDetailLabel ? `${interviewDetailLabel}: ${interviewDetailValue}\n` : ''}
+
+${additionalDetails ? `\n${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${additionalDetails}` : ''}
 
 Please confirm your availability for this interview. If you are unable to attend at this time, please let us know so we can arrange an alternative.
 
@@ -1092,9 +1085,8 @@ Samartha InfoSolutions Pvt Ltd.
               ]
             };
 
-            // Email options for interviewer
             let mailOptionsInterviewer = {
-              from: 'newjobrequesttest@gmail.com',
+              from: senderEmail,
               to: interviewerEmail,
               subject: 'Interview Scheduled',
               text: `Dear ${interviewerName},
@@ -1106,7 +1098,8 @@ I have scheduled an interview for the candidate ${candidateName}. The details ar
 Date and Time: ${scheduledInterviewTiming}
 Mode: ${modeOfInterview}
 Type: ${typeOfInterview}
-${interviewDetailLabel ? `${interviewDetailLabel}: ${interviewDetailValue}\n` : ''}
+
+${additionalDetails ? `\n${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${additionalDetails}` : ''}
 
 If you have any specific instructions or questions regarding the interview, please let me know.
 
