@@ -233,7 +233,8 @@ thead th {
             const interviewTableBody = document.getElementById('interviewData');
             const searchInput = document.getElementById('searchInput');
             const searchButton = document.getElementById('searchButton');
-
+            const refreshButton = document.getElementById('refreshButton');
+    
             // Function to create a table row for a candidate
             function createCandidateRow(candidate) {
                 const row = document.createElement('tr');
@@ -275,35 +276,35 @@ thead th {
                     </td>
                     <td><button class="schedule-button" data-candidate-id="${candidate.requested_candidate_id}">Schedule</button></td>
                 `;
-
+    
                 // Populate dropdowns and timing input from localStorage
                 const typeDropdown = row.querySelector('.type-of-interview select');
                 const modeDropdown = row.querySelector('.mode-of-interview select');
                 const stageDropdown = row.querySelector('.stage-of-interview select');
                 const timingInput = row.querySelector('.timing-of-interview input');
-
+    
                 typeDropdown.value = localStorage.getItem(`selectedType_${candidate.requested_candidate_id}`) || candidate.type_of_interview;
                 modeDropdown.value = localStorage.getItem(`selectedMode_${candidate.requested_candidate_id}`) || candidate.mode_of_interview;
                 stageDropdown.value = localStorage.getItem(`selectedStage_${candidate.requested_candidate_id}`) || candidate.stage_of_interview;
                 timingInput.value = localStorage.getItem(`selectedTiming_${candidate.requested_candidate_id}`) || '';
-
+    
                 // Event listeners to update localStorage on dropdown and input change
                 typeDropdown.addEventListener('change', function () {
                     localStorage.setItem(`selectedType_${candidate.requested_candidate_id}`, this.value);
                 });
-
+    
                 modeDropdown.addEventListener('change', function () {
                     localStorage.setItem(`selectedMode_${candidate.requested_candidate_id}`, this.value);
                 });
-
+    
                 stageDropdown.addEventListener('change', function () {
                     localStorage.setItem(`selectedStage_${candidate.requested_candidate_id}`, this.value);
                 });
-
+    
                 timingInput.addEventListener('change', function () {
                     localStorage.setItem(`selectedTiming_${candidate.requested_candidate_id}`, this.value);
                 });
-
+    
                 // Event listener for scheduling button click
                 const scheduleButton = row.querySelector('.schedule-button');
                 scheduleButton.addEventListener('click', function () {
@@ -313,27 +314,59 @@ thead th {
                     const stageOfInterview = stageDropdown.value;
                     const timingOfInterview = timingInput.value;
                     const interviewerName = row.querySelector('.interviewer-name').textContent.trim();
-
-                    scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName);
+    
+                    // Prompt for location or meeting link based on type of interview
+                    let additionalDetailsPrompt;
+                    if (typeOfInterview === 'Face to Face') {
+                        additionalDetailsPrompt = 'Please enter the location for the Face to Face interview:';
+                    } else if (typeOfInterview === 'Video Interview') {
+                        additionalDetailsPrompt = 'Please enter the meeting link for the Video Interview:';
+                    } else {
+                        // No additional details needed for other types of interviews
+                        additionalDetailsPrompt = null;
+                    }
+    
+                    // Display prompt and handle user input
+                    if (additionalDetailsPrompt) {
+                        const additionalDetails = prompt(additionalDetailsPrompt);
+                        if (!additionalDetails) {
+                            alert(`${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link'} is required for ${typeOfInterview} interview.`);
+                            return;
+                        }
+    
+                        // Call function to schedule interview with additional details
+                        scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName, additionalDetails);
+                    } else {
+                        // Call function to schedule interview without additional details
+                        scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName);
+                    }
                 });
-
+    
                 return row;
             }
-
-            // Function to schedule an interview via API call
-            function scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName) {
-                fetch(`http://localhost:3003/requested_candidates/${candidateId}`, {
+    
+            function scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName, additionalDetails = null) {
+                // Prepare API request body
+                const requestBody = {
+                    type_of_interview: typeOfInterview,
+                    mode_of_interview: modeOfInterview,
+                    stage_of_interview: stageOfInterview,
+                    scheduled_interview_timing: timingOfInterview,
+                    interviewer_name: interviewerName
+                };
+    
+                // Add additional details to request body if provided
+                if (additionalDetails !== null) {
+                    requestBody.additional_details = additionalDetails;
+                }
+    
+                // Make API call to schedule interview
+                fetch(`http://localhost:3000/requested_candidates/${candidateId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        type_of_interview: typeOfInterview,
-                        mode_of_interview: modeOfInterview,
-                        stage_of_interview: stageOfInterview,
-                        scheduled_interview_timing: timingOfInterview,
-                        interviewer_name: interviewerName
-                    }),
+                    body: JSON.stringify(requestBody),
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -351,11 +384,11 @@ thead th {
                     alert('Failed to schedule candidate interview');
                 });
             }
-
+    
             // Function to update table row after scheduling
             function updateTableRow(updatedCandidate) {
                 const rows = document.querySelectorAll('#interviewData tr');
-
+    
                 rows.forEach(row => {
                     const candidateId = row.querySelector('.schedule-button').getAttribute('data-candidate-id');
                     if (candidateId === updatedCandidate.requested_candidate_id) {
@@ -368,10 +401,10 @@ thead th {
                     }
                 });
             }
-
+    
             // Function to fetch requested candidates from API
             function fetchRequestedCandidates() {
-                fetch('http://localhost:3003/requested_candidates')
+                fetch('http://localhost:3000/requested_candidates')
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Failed to fetch requested candidates.');
@@ -386,12 +419,12 @@ thead th {
                     })
                     .catch(error => console.error('Error fetching requested candidates:', error));
             }
-
+    
             // Function to filter candidates by any column value
             function filterCandidates() {
                 const filterValue = searchInput.value.trim().toLowerCase();
                 const rows = interviewTableBody.querySelectorAll('tr');
-
+    
                 rows.forEach(row => {
                     let found = false;
                     row.querySelectorAll('td').forEach(cell => {
@@ -400,7 +433,7 @@ thead th {
                             found = true;
                         }
                     });
-
+    
                     if (found) {
                         row.style.display = '';
                     } else {
@@ -408,22 +441,23 @@ thead th {
                     }
                 });
             }
-
+    
             function refreshTable() {
                 // Clear existing rows
                 interviewTableBody.innerHTML = '';
                 // Fetch new data
                 fetchRequestedCandidates();
             }
-
+    
             searchButton.addEventListener('click', filterCandidates);
-
+    
             searchInput.addEventListener('keyup', filterCandidates);
-
+    
             refreshButton.addEventListener('click', refreshTable);
-
+    
             fetchRequestedCandidates();
         });
     </script>
+    
 </body>
 </html>
