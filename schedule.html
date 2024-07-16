@@ -8,29 +8,29 @@
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f8f9fa;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Align items from the top */
-    min-height: 100vh; /* Full viewport height */
-    min-width: 100vw; /* Full viewport width */
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333333; /* Dark text color */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items from the top */
+            min-height: 100vh; /* Full viewport height */
+            min-width: 100vw; /* Full viewport width */
         }
 
         .container {
             width: 100%;
-    padding: 34px; /* Increased padding for better spacing */
-    background-color: #ffffff; /* White background */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    color: #333333; /* Dark text color */
-    margin-top: 0; /* Adjusted margin-top */
-    margin-bottom: 0; /* Adjusted margin-bottom */
-    margin-left: auto;
-    margin-right: auto;
+            padding: 34px; /* Increased padding for better spacing */
+            background-color: #ffffff; /* White background */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: #333333; /* Dark text color */
+            margin-top: 0; /* Adjusted margin-top */
+            margin-bottom: 0; /* Adjusted margin-bottom */
+            margin-left: auto;
+            margin-right: auto;
         }
 
         h1 {
@@ -38,9 +38,7 @@
             margin-bottom: 20px;
             text-align: center;
             color: #060301; /* Blue text color */
-        
         }
-
 
         table {
             width: 100%;
@@ -53,20 +51,18 @@
             overflow: hidden; /* Hide overflow for better shadow appearance */
         }
 
-       
         thead {
-    background-color: #1f2333; /* Dark header background */
-    color: #ffffff; /* White text color */
-}
+            background-color: #1f2333; /* Dark header background */
+            color: #ffffff; /* White text color */
+        }
 
-
-thead th {
-    padding: 15px;
-    font-size: 14px;
-    text-align: center;
-    text-transform: uppercase;
-    border-bottom: 2px solid #283e51; /* Dark bottom border */
-}
+        thead th {
+            padding: 15px;
+            font-size: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #283e51; /* Dark bottom border */
+        }
 
         tbody tr:nth-child(even) {
             background-color: #f9f9f9; /* Lighter row background */
@@ -106,8 +102,7 @@ thead th {
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            color: #333; 
-            padding: 11px;/* Dark text color */
+            color: #333; /* Dark text color */
         }
 
         .schedule-button {
@@ -124,12 +119,13 @@ thead th {
         .schedule-button:hover {
             background-color: #1527ca; /* Darker green hover background */
         }
+
         .search-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
         #searchInput {
             width: 300px; /* Adjust width as needed */
@@ -141,7 +137,8 @@ thead th {
             margin-right: 5px; /* Add margin-right for space between input and button */
         }
 
-        #searchButton {
+        .search-button,
+        .refresh-button {
             background-color: #1f6feb; /* Dark blue background */
             color: #fff; /* White text */
             border: none;
@@ -152,22 +149,8 @@ thead th {
             transition: background-color 0.3s;
         }
 
-        #refreshButton {
-            background-color: #1f6feb; /* Dark blue background */
-            color: #fff; /* White text */
-            border: none;
-            padding: 8px 12px; /* Adjust padding for button */
-            border-radius: 0 4px 4px 0; /* Rounded right corners */
-            cursor: pointer;
-            font-size: 14px; /* Match font size with input */
-            transition: background-color 0.3s;
-        }
-
-        #searchButton:hover {
-            background-color: #1527ca; /* Darker blue hover background */
-        }
-
-        #refreshButton:hover {
+        .search-button:hover,
+        .refresh-button:hover {
             background-color: #1527ca; /* Darker blue hover background */
         }
 
@@ -190,10 +173,8 @@ thead th {
                 margin-right: 5px; /* Add margin-right for space between input and button */
             }
 
-            #searchButton {
-                padding: 8px 10px; /* Adjust padding for smaller screens */
-            }
-            #refreshButton {
+            .search-button,
+            .refresh-button {
                 padding: 8px 10px; /* Adjust padding for smaller screens */
             }
         }
@@ -202,10 +183,10 @@ thead th {
 <body>
     <div class="container">
         <h1>Schedule Candidate Interview</h1>
-        <div id="search-container">
+        <div class="search-container">
             <input type="text" id="searchInput" placeholder="Enter search keyword...">
-            <button id="searchButton"><i class="fas fa-search"></i></button>
-            <button id="refreshButton"><i class="fas fa-sync-alt"></i></button>
+            <button class="search-button"><i class="fas fa-search"></i></button>
+            <button class="refresh-button"><i class="fas fa-sync-alt"></i></button>
         </div>
         <div style="overflow-x:auto;">
             <table id="interviewTable">
@@ -232,8 +213,8 @@ thead th {
         document.addEventListener('DOMContentLoaded', function () {
             const interviewTableBody = document.getElementById('interviewData');
             const searchInput = document.getElementById('searchInput');
-            const searchButton = document.getElementById('searchButton');
-            const refreshButton = document.getElementById('refreshButton');
+            const searchButton = document.querySelector('.search-button');
+            const refreshButton = document.querySelector('.refresh-button');
     
             // Function to create a table row for a candidate
             function createCandidateRow(candidate) {
@@ -315,32 +296,27 @@ thead th {
                     const timingOfInterview = timingInput.value;
                     const interviewerName = row.querySelector('.interviewer-name').textContent.trim();
     
-                    // Prompt for location or meeting link based on type of interview
                     let additionalDetailsPrompt;
-                    if (typeOfInterview === 'Face to Face') {
-                        additionalDetailsPrompt = 'Please enter the location for the Face to Face interview:';
-                    } else if (typeOfInterview === 'Video Interview') {
-                        additionalDetailsPrompt = 'Please enter the meeting link for the Video Interview:';
-                    } else {
-                        // No additional details needed for other types of interviews
-                        additionalDetailsPrompt = null;
-                    }
-    
-                    // Display prompt and handle user input
-                    if (additionalDetailsPrompt) {
-                        const additionalDetails = prompt(additionalDetailsPrompt);
-                        if (!additionalDetails) {
-                            alert(`${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link'} is required for ${typeOfInterview} interview.`);
-                            return;
-                        }
-    
-                        // Call function to schedule interview with additional details
-                        scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName, additionalDetails);
-                    } else {
-                        // Call function to schedule interview without additional details
-                        scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName);
-                    }
-                });
+    if (typeOfInterview === 'Face to Face') {
+        additionalDetailsPrompt = 'Please enter the location for the Face to Face interview:';
+    } else if (typeOfInterview === 'Video Interview') {
+        additionalDetailsPrompt = 'Please enter the meeting link for the Video Interview:';
+    } else {
+        additionalDetailsPrompt = null;
+    }
+
+    if (additionalDetailsPrompt) {
+        const additionalDetails = prompt(additionalDetailsPrompt);
+        if (!additionalDetails) {
+            alert(`${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link'} is required for ${typeOfInterview} interview.`);
+            return;
+        }
+
+        scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName, additionalDetails);
+    } else {
+        scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName);
+    }
+});
     
                 return row;
             }
@@ -352,7 +328,8 @@ thead th {
                     mode_of_interview: modeOfInterview,
                     stage_of_interview: stageOfInterview,
                     scheduled_interview_timing: timingOfInterview,
-                    interviewer_name: interviewerName
+                    interviewer_name: interviewerName,
+                    additional_details: additionalDetails
                 };
     
                 // Add additional details to request body if provided
@@ -450,14 +427,11 @@ thead th {
             }
     
             searchButton.addEventListener('click', filterCandidates);
-    
             searchInput.addEventListener('keyup', filterCandidates);
-    
             refreshButton.addEventListener('click', refreshTable);
     
             fetchRequestedCandidates();
         });
     </script>
-    
 </body>
 </html>
