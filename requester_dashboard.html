@@ -97,26 +97,16 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="loadPage('Candidate.html')">TimeSheet Gen</a>
+                <a class="nav-link" href="#" onclick="loadPage('index.html')">TimeSheet Gen</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" onclick="loadPage('index.html')">Task Manager</a>
             </li>
-            <!-- Dropdown for Requester -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="requesterDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Requester
-                </a>
-                <div class="dropdown-menu" aria-labelledby="requesterDropdown">
-                    <a class="dropdown-item" href="#" onclick="loadPage('addrequest.html')">Add Request</a>
-                    <a class="dropdown-item" href="#" onclick="loadPage('viewrequest.html')">View Request</a>
-                    <a class="dropdown-item" href="#" onclick="loadPage('feedback.html')">Feedback
-                    </a>
-                </div>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="loadPage('viewrequest.html')">Requester</a>
             </li>
-           
         </ul>
-
+    
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <a class="nav-link" href="#" onclick="logout()">Signout</a>
@@ -124,54 +114,60 @@
         </ul>
     </nav>
 
-
     <div class="content">
         <iframe id="contentFrame" src="" frameborder="0"></iframe>
     </div>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-       // Get query parameters from the URL
-       const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const token = urlParams.get('token');
-        const eid = urlParams.get('eid');
-        console.log('Employee ID:', eid);
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    // Get query parameters from the URL
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const token = urlParams.get('token');
+    const eid = urlParams.get('eid');
+    console.log('Employee ID:', eid);
 
-        // Load a page with the given URL and append the eid parameter
-        function loadPage(pageUrl) {
-            const pageWithEid = `${pageUrl}?eid=${encodeURIComponent(eid)}`;
-            document.getElementById('contentFrame').src = pageWithEid;
-            highlightMenu(pageUrl);
-        }
+    // Load a page with the given URL and append the eid parameter
+    function loadPage(pageUrl) {
+        const pageWithEid = `${pageUrl}?eid=${encodeURIComponent(eid)}`;
+        document.getElementById('contentFrame').src = pageWithEid;
+        highlightMenu(pageUrl);
+    }
 
-        function highlightMenu(pageUrl) {
-            const menuLinks = document.querySelectorAll('.navbar-nav .nav-link, .navbar-nav .dropdown-item');
-            menuLinks.forEach(link => {
-                if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(pageUrl)) {
-                    menuLinks.forEach(item => item.classList.remove('active'));
-                    link.classList.add('active');
-                    if (link.classList.contains('dropdown-item')) {
-                        link.closest('.dropdown').querySelector('.nav-link').classList.add('active');
-                    }
+    function highlightMenu(pageUrl) {
+        const menuLinks = document.querySelectorAll('.navbar-nav .nav-link, .navbar-nav .dropdown-item');
+        menuLinks.forEach(link => {
+            if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(pageUrl)) {
+                menuLinks.forEach(item => item.classList.remove('active'));
+                link.classList.add('active');
+                if (link.classList.contains('dropdown-item')) {
+                    link.closest('.dropdown').querySelector('.nav-link').classList.add('active');
                 }
-            });
-        }
-
-        function logout() {
-            localStorage.removeItem('userToken'); 
-            window.location.href = 'login.html'; 
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            highlightMenu(initialPage);
+            }
         });
+    }
 
-        
-    </script>
+    function logout() {
+        localStorage.removeItem('userToken');
+        window.location.href = 'login.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        highlightMenu('viewrequest.html'); // Highlight 'View Request' initially
+    });
+
+    // Automatically load 'View Request' page when 'Requester' is clicked
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('dropdown-toggle') && event.target.textContent.trim() === 'Requester') {
+            loadPage('viewrequest.html');
+        }
+    });
+
+</script>
+
 </body>
 </html>
 
