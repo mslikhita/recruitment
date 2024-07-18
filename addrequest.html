@@ -6,127 +6,193 @@
     <title>Job Request Form</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+       /* Reset and general styles */
+       body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items from the top */
+    min-height: 100vh; /* Full viewport height */
+    min-width: 100vw; /* Full viewport width */
+}
 
-        .container {
-            background: #ffffff;
-            padding: 20px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 848px;
-            width: 100%;
-            text-align: center;
-            color: #0c0c0c;
-        }
+/* Container styles */
+.container {
+    width: 39%;
+    padding: 34px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #333333; /* Dark text color */
+    margin-top: 15px; /* Adjusted margin-top */
+    margin-bottom: 20px; /* Adjusted margin-bottom */
+    margin-left: auto;
+    margin-right: auto;
+    position: relative; /* Ensure relative positioning for absolute elements */
+}
 
-        .container h1 {
-            font-size: 24px;
-            color: #060301;
-            margin-bottom: 35px; /* Added margin-bottom for spacing */
-        }
+h1 {
+    font-size: 24px;
+    color: #060301;
+    margin-bottom: 50px; /* Adjusted margin for spacing */
+    margin-top: -3px;
+}
 
-        .input-group {
-            margin-bottom: 35px;
-        }
+/* Input styles */
+.input-group {
+    margin-bottom: 20px;
+}
 
-        .input-group label {
-            display: block;
-            color: #1f1007;
-            margin-bottom: 3px;
-            text-align: left;
-            font-weight: bold;
-        }
+.input-group label {
+    display: block;
+    color: #1f1007;
+    margin-bottom: 5px;
+    text-align: left;
+    font-weight: bold;
+}
 
-        .input-wrapper {
-            display: flex;
-            align-items: center;
-        }
+.input-wrapper {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: -35px; /* Added margin for spacing */
+}
 
-        .input-wrapper label {
-            margin-right: 11px;
-            width: 150px; /* Adjust width of labels as needed */
-            text-align: right;
-        }
+.input-wrapper label {
+    margin-right: 33px;
+    width: 125px; /* Adjusted width of labels */
+    text-align: left;
+}
 
-        .input-wrapper input,
-        .input-wrapper textarea,
-        .input-wrapper select {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 50%; /* Ensure inputs take full width */
-        }
 
-        .inline-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap; /* Allow items to wrap */
-            gap: 20px; /* Added gap between inline groups */
-        }
+.input-wrapper input,
+.input-wrapper select {
 
-        .inline-group .input-group {
-            flex-basis: calc(50% - 20px); /* Adjusted flex-basis to allow two columns with spacing */
-        }
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 50px
+}
 
-        #eid {
-            width: auto; /* Allow the input to have an automatic width */
-            flex: 0 1 220px; /* Allow the input to shrink and grow with a basis of 150px */
-        }
-        
-        button {
-            width: 200px; /* Adjust the width as per your preference */
-            height: 40px; /* Adjust the height as per your preference */
-            border: none;
-            border-radius: 5px;
-            background: #007BFF;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px; /* Increased margin-top for spacing */
-            transition: background 0.3s ease; /* Added transition effect */
-        }
+.input-wrapper textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 42px;
+    flex: 1; /* Take remaining space within the flex container */
+    min-height: 100px; /* Example of minimum height */
+}
+.input-group input,
+.input-group textarea,
+.input-group select {
+   
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 39px; /* Adjusted margin for spacing */
+    min-height: 33px; /* Example of specific height */
+    width: 270px; /* Example of specific width */
+    box-sizing: border-box; /* Ensures padding and border are included in width */
+}
 
-        button:hover {
-            background: #0056b3;
-        }
+/* Adjust specific fields as needed */
+.input-group #eid {
+    width: 54%; /* Adjusted width for Employee ID */
+    margin-bottom: 39px; /* Equal margin for Employee ID */
+}
 
-        .message {
-            margin-top: 10px;
-            color: #101f1f;
-            font-size: 14px;
-        }
+.input-group #jobDescription {
+    min-height: 50px; /* Example of specific height for Job Description */
+    margin-bottom: 19px; /* Equal margin for Job Description */
+}
 
-        .links {
-            margin-top: 20px;
-        }
+.input-group #skills {
+    margin-bottom: 21px; /* Equal margin for Skills textarea */
+}
 
-        .links a {
-            color: #007BFF;
-            text-decoration: none;
-        }
+.input-group #experience {
+    margin-bottom: 39px; /* Equal margin for Experience */
+}
 
-        .links a:hover {
-            text-decoration: underline;
-        }
+.input-group #designation {
+    margin-bottom: 26px; /* Equal margin for Designation */
+}
 
-        .fa-file-alt, .fa-file-pdf, .fa-briefcase, .fa-tools, .fa-envelope, .fa-hourglass-half {
-            color: white;
-        }
+.input-group #recruiter_email {
+    margin-bottom: 26px; /* Equal margin for Email Address */
+}
+
+/* Additional styles for textarea */
+textarea {
+    resize: vertical; /* Allow vertical resizing */
+}
+
+
+
+/* Inline group styles */
+.inline-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.inline-group .input-group {
+    flex-basis: calc(50% - 20px);
+}
+
+/* Button styles */
+button {
+    width: 200px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    background: #007BFF;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 37px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* Message and links styles */
+.message {
+    margin-top: 10px;
+    color: #101f1f;
+    font-size: 14px;
+}
+
+.links {
+    margin-top: 20px;
+}
+
+.links a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
+/* Icon styles (assuming FontAwesome icons are used) */
+.fa-file-alt, .fa-file-pdf, .fa-briefcase, .fa-tools, .fa-envelope, .fa-hourglass-half {
+    color: white;
+}
+
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Request Portal</h1>
+        <h1><u>JOB REQUEST PORTAL</u></h1>
         <form id="requestForm" enctype="multipart/form-data" onsubmit="return validateForm()">
             <div class="input-group">
                 <div class="input-wrapper">
@@ -242,9 +308,8 @@
             <div class="message" id="message"></div>
         </form>
     </div>
-    <script  src="addrequest.js">
-       
-    </script>
+    <script  src="addrequest.js"></script>
+    
     
 </body>
 </html>
