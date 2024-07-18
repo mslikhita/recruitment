@@ -1,6 +1,6 @@
 let jobRequests = [];
 let filteredJobRequests = []; // Array to hold filtered job requests
-const itemsPerPage = 2;
+const itemsPerPage = 10;
 let currentPage = 1;
 let currentRequestId = null; // Track current request ID for displaying candidates
 let searchColumn = 'user_name'; // Default search column
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function fetchJobRequests() {
     try {
-        const response = await fetch("http://localhost:3001/requests");
+        const response = await fetch("http://localhost:3000/requests");
         if (!response.ok) {
             throw new Error(`Failed to fetch job requests: ${response.status} ${response.statusText}`);
         }
@@ -173,7 +173,7 @@ async function addCandidateToRequest(candidateId, requestId) {
             request_id: requestId
         };
 
-        const response = await fetch('http://localhost:3003/requested_candidates', {
+        const response = await fetch('http://localhost:3000/requested_candidates', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -247,4 +247,5 @@ async function viewResume(candidateId) {
         console.error('Error viewing resume:', error);
         alert('Failed to view resume. Please try again later.');
     }
+    
 }
