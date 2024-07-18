@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Submit form data via fetch
-        fetch('http://localhost:3001/requests', {
+        fetch('http://localhost:3000/requests', {
             method: 'POST',
             body: formData
         })
