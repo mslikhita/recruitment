@@ -873,6 +873,48 @@ app.get('/requested_candidates', (req, res) => {
   });
 });
 
+app.get('/requested_candidates/details/:request_id', (req, res) => {
+  const requestId = req.params.request_id;
+  
+  const sql = `
+    SELECT 
+      rc.candidate_id,
+      c.candidate_name,
+      c.candidate_email,
+      c.mobile_no,
+      c.resume,
+      c.job_portal,
+      c.refered_by,
+      c.experience
+    FROM requested_candidate rc
+    INNER JOIN candidate c ON rc.candidate_id = c.candidate_id
+    WHERE rc.request_id = ?
+  `;
+
+  db.query(sql, [requestId], (error, results) => {
+    if (error) {
+      console.error('Error fetching requested candidate details:', error);
+      res.status(500).json({ error: 'Failed to fetch requested candidate details.' });
+    } else {
+      if (results.length === 0) {
+        res.status(404).json({ error: 'Requested candidate details not found.' });
+      } else {
+        const candidateDetails = results.map(row => ({
+          candidate_id: results[0].candidate_id,
+          candidate_name: results[0].candidate_name,
+          candidate_email: results[0].candidate_email,
+          mobile_no: results[0].mobile_no,
+          resume: results[0].resume,
+          job_portal: results[0].job_portal,
+          refered_by: results[0].refered_by,
+          experience: results[0].experience
+        }));
+        res.json(candidateDetails);
+      }
+    }
+  });
+});
+
 app.put('/requested_candidates/:id', (req, res) => {
   const requestedCandidateId = req.params.id;
   const { mode_of_interview, stage_of_interview, interviewer_name, scheduled_interview_timing } = req.body;
@@ -956,13 +998,6 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
       }
     });
 
-    // Fetch sender's email (assuming it's stored in 'ud' table)
-    const fetchSenderEmailQuery = `
-      SELECT username AS senderEmail
-      FROM ud
-      WHERE role = 'recruiter' -- Adjust as per your application logic
-      LIMIT 1
-    `;
 
     // Fetch candidate details to get candidate_name
     const fetchCandidateDetailsQuery = `
@@ -1071,7 +1106,7 @@ Date and Time: ${scheduledInterviewTiming}
 Mode: ${modeOfInterview}
 Type: ${typeOfInterview}
 
-${additionalDetails ? `\n${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${additionalDetails}` : ''}
+${additionalDetails ? `\n${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link/Location'}: ${additionalDetails}` : ''}
 
 Please confirm your availability for this interview. If you are unable to attend at this time, please let us know so we can arrange an alternative.
 
@@ -1080,9 +1115,7 @@ If you have any questions or need further information, please feel free to conta
 Best regards,
 Samartha InfoSolutions Pvt Ltd.
 `,
-              attachments: [
-                resumeAttachment // Attach candidate's resume if available
-              ]
+           
             };
 
             let mailOptionsInterviewer = {
@@ -1099,7 +1132,9 @@ Date and Time: ${scheduledInterviewTiming}
 Mode: ${modeOfInterview}
 Type: ${typeOfInterview}
 
-${additionalDetails ? `\n${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link'}: ${additionalDetails}` : ''}
+${additionalDetails ? `\n${typeOfInterview === 'Face to Face' ? 'Location' : 'Meeting Link/Location'}: ${additionalDetails}` : ''}
+
+Attached candidate resume for reference.
 
 If you have any specific instructions or questions regarding the interview, please let me know.
 
