@@ -8,7 +8,7 @@ let searchColumn = 'user_name'; // Default search column
 document.addEventListener('DOMContentLoaded', function() {
     fetchJobRequests();
     setupPagination();
-    hidePopup(); // Ensure the popup is hidden when the page loads
+    closePopup(); // Ensure the popup is hidden when the page loads
 });
 
 async function fetchJobRequests() {
@@ -23,6 +23,7 @@ async function fetchJobRequests() {
         displayJobRequests();
     } catch (error) {
         console.error('Error fetching job requests:', error);
+        alert('Failed to fetch job requests. Please try again later.');
     }
 }
 
@@ -30,25 +31,37 @@ function setupPagination() {
     const prevPageBtn = document.getElementById('prevPageBtn');
     const nextPageBtn = document.getElementById('nextPageBtn');
 
-    prevPageBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            displayJobRequests();
-        }
-    });
+    if (prevPageBtn && nextPageBtn) {
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayJobRequests();
+            }
+        });
 
-    nextPageBtn.addEventListener('click', () => {
-        const totalPages = Math.ceil(filteredJobRequests.length / itemsPerPage);
-        if (currentPage < totalPages) {
-            currentPage++;
-            displayJobRequests();
-        }
-    });
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredJobRequests.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayJobRequests();
+            }
+        });
+    } else {
+        console.error('Pagination buttons not found.');
+    }
 }
 
 function renderPagination(totalItems) {
     const paginationControls = document.getElementById('paginationControls');
+    const pageInfo = document.getElementById('pageInfo');
+
+    if (!paginationControls || !pageInfo) {
+        console.error('Pagination controls or page info element not found.');
+        return;
+    }
+
     paginationControls.innerHTML = '';
+    pageInfo.textContent = ''; // Clear previous content
 
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -90,12 +103,15 @@ function renderPagination(totalItems) {
     paginationControls.appendChild(nextButton);
 
     // Update page info
-    const pageInfo = document.getElementById('pageInfo');
     pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
 }
 
 function displayJobRequests() {
     const jobRequestBody = document.getElementById('jobRequestBody');
+    if (!jobRequestBody) {
+        console.error('Job request body element not found.');
+        return;
+    }
     jobRequestBody.innerHTML = '';
 
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -114,6 +130,9 @@ function displayJobRequests() {
                 ${request.job_description_file ? `<a href="data:application/pdf;base64,${btoa(String.fromCharCode(...new Uint8Array(request.job_description_file.data)))}" download="job_description.pdf">Download</a>` : 'No file'}
             </td>
             <td>${request.status}</td>
+            <td>
+                <button onclick="displayCandidatesInPopup('${request.request_id}')">View</button> <!-- Pass request.id -->
+            </td>
         `;
         jobRequestBody.appendChild(row);
     });
@@ -121,9 +140,11 @@ function displayJobRequests() {
     renderPagination(filteredJobRequests.length);
 }
 
-function showCandidates(requestId) {
+
+
+/*function showCandidates(requestId) {
     currentRequestId = requestId; // Set current request ID
-    const candidatesUrl = `http://localhost:3000/candidates?request_id=${requestId}`;
+    const candidatesUrl = `http://localhost:3000/requested_candidates?request_id=${requestId}`;
 
     fetch(candidatesUrl)
         .then(response => {
@@ -133,74 +154,88 @@ function showCandidates(requestId) {
             return response.json();
         })
         .then(data => {
-            displayCandidatesInPopup(data, requestId); // Pass requestId to display candidates
+            const candidateId = data[0].candidate_id; // Assuming candidate_id is in the first item of the response array
+            displayCandidatesInPopup(candidateId, requestId); // Pass both candidateId and requestId
         })
         .catch(error => {
             console.error('Error fetching candidates:', error);
             alert('Failed to fetch candidates. Please try again later.');
         });
-}
-
-function displayCandidatesInPopup(candidates, requestId) {
-    const candidateBody = document.getElementById('candidateBody');
-    candidateBody.innerHTML = '';
-
-    candidates.forEach(candidate => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${candidate.candidate_name}</td>
-            <td>${candidate.candidate_email}</td>
-            <td>${candidate.mobile_no}</td>
-            <td>${candidate.experience}</td>
-            <td>${candidate.job_portal}</td>
-            <td>${candidate.refered_by}</td>
-            <td>
-                <a href="#" onclick="viewResume('${candidate.candidate_id}')">View Resume</a>
-            </td>
-            <td>
-                <button onclick="addCandidateToRequest('${candidate.candidate_id}', '${requestId}')">Add</button> <!-- Pass requestId -->
-            </td>`;
-        candidateBody.appendChild(row);
-    });
-
-    openPopup(); 
-}
-
-async function addCandidateToRequest(candidateId, requestId) {
-    try {
-        const requestBody = {
-            candidate_id: candidateId,
-            request_id: requestId
-        };
-
-        const response = await fetch('http://localhost:3000/requested_candidates', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to add candidate to request: ${response.status} ${response.statusText}`);
+} */
+        async function displayCandidatesInPopup(requestId) {
+            currentRequestId = requestId; // Set current request ID
+        
+            try {
+                const response = await fetch(`http://localhost:3000/requested_candidates/details/${requestId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch candidate details for request ${requestId}`);
+                }
+        
+                const data = await response.json();
+                const candidateDetails = data; // Assuming the response provides all candidate details
+        
+                // Clear previous content
+                const candidateBody = document.getElementById('candidateBody');
+                candidateBody.innerHTML = '';
+        
+                // Create new row with candidate details
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${candidateDetails.candidate_name}</td>
+                    <td>${candidateDetails.candidate_email}</td>
+                    <td>${candidateDetails.mobile_no}</td>
+                    <td>${candidateDetails.experience}</td>
+                    <td>${candidateDetails.job_portal}</td>
+                    <td>${candidateDetails.refered_by}</td>
+                    <td>
+                        <a href="#" onclick="viewResume('${candidateDetails.candidate_id}')">View Resume</a>
+                    </td>
+                `;
+                candidateBody.appendChild(row);
+        
+                openPopup(); // Open the popup to display candidate details
+            } catch (error) {
+                console.error('Error fetching candidate details:', error);
+                alert('Failed to fetch candidate details. Please try again later.');
+            }
         }
+        
+async function viewResume(candidateId) {
+    try {
+        const response = await fetch(`http://localhost:3000/candidates/${candidateId}/resume`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch resume: ${response.status} ${response.statusText}`);
+        }
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
 
-        alert('Candidate added to request successfully!');
-        closePopup();
+        const newTab = window.open(url, '_blank');
+        if (!newTab) {
+            throw new Error('Failed to open PDF in a new tab. Please check your browser settings.');
+        }
     } catch (error) {
-        console.error('Error adding candidate to request:', error);
-        alert('Failed to add candidate to request. Please try again later.');
+        console.error('Error viewing resume:', error);
+        alert('Failed to view resume. Please try again later.');
     }
 }
 
 function openPopup() {
     const popupContainer = document.getElementById('popupContainer');
-    popupContainer.style.display = 'flex';
+    if (popupContainer) {
+        popupContainer.style.display = 'flex';
+    } else {
+        console.error('Popup container element not found.');
+    }
 }
 
 function closePopup() {
     const popupContainer = document.getElementById('popupContainer');
-    popupContainer.style.display = 'none';
+    if (popupContainer) {
+        popupContainer.style.display = 'none';
+    } else {
+        console.error('Popup container element not found.');
+    }
 }
 
 function applySearch() {
@@ -227,25 +262,5 @@ function refreshJobRequests() {
     filteredJobRequests = jobRequests; // Reset filtered job requests to all job requests
     currentPage = 1; // Reset pagination to first page
     displayJobRequests(); // Redisplay all job requests
-    hidePopup(); // Ensure the popup is hidden when refreshing
-}
-
-async function viewResume(candidateId) {
-    try {
-        const response = await fetch(`http://localhost:3000/candidates/${candidateId}/resume`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch resume: ${response.status} ${response.statusText}`);
-        }
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-
-        const newTab = window.open(url, '_blank');
-        if (!newTab) {
-            throw new Error('Failed to open PDF in a new tab. Please check your browser settings.');
-        }
-    } catch (error) {
-        console.error('Error viewing resume:', error);
-        alert('Failed to view resume. Please try again later.');
-    }
-    
+    closePopup(); // Ensure the popup is hidden when refreshing
 }
