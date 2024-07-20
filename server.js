@@ -1003,7 +1003,14 @@ function sendEmail(candidateEmail, interviewerEmail, scheduledInterviewTiming, m
       FROM candidate
       WHERE candidate_email = ?
     `;
-
+      
+    // Fetch sender's email (assuming it's stored in 'ud' table)
+    const fetchSenderEmailQuery = `
+      SELECT username AS senderEmail
+      FROM ud
+      WHERE role = 'recruiter' -- Adjust as per your application logic
+      LIMIT 1
+    `;
     // Fetch interviewer details to get interviewer_name
     const fetchInterviewerDetailsQuery = `
       SELECT ename AS interviewer_name
