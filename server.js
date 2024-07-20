@@ -896,24 +896,22 @@ app.get('/requested_candidates/details/:request_id', (req, res) => {
       console.error('Error fetching requested candidate details:', error);
       res.status(500).json({ error: 'Failed to fetch requested candidate details.' });
     } else {
-      if (results.length === 0) {
-        res.status(404).json({ error: 'Requested candidate details not found.' });
-      } else {
-        const candidateDetails = results.map(row => ({
-          candidate_id: results[0].candidate_id,
-          candidate_name: results[0].candidate_name,
-          candidate_email: results[0].candidate_email,
-          mobile_no: results[0].mobile_no,
-          resume: results[0].resume,
-          job_portal: results[0].job_portal,
-          refered_by: results[0].refered_by,
-          experience: results[0].experience
-        }));
-        res.json(candidateDetails);
-      }
+      const candidateDetailsArray = results.map(row => ({
+        candidate_id: row.candidate_id,
+        candidate_name: row.candidate_name,
+        candidate_email: row.candidate_email,
+        mobile_no: row.mobile_no,
+        resume: row.resume,
+        job_portal: row.job_portal,
+        refered_by: row.refered_by,
+        experience: row.experience
+      }));
+
+      res.json(candidateDetailsArray); // Always return an array of candidate details
     }
   });
 });
+
 
 app.put('/requested_candidates/:id', (req, res) => {
   const requestedCandidateId = req.params.id;
