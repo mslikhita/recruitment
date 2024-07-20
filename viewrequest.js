@@ -167,6 +167,7 @@ async function displayCandidatesInPopup(requestId) {
                 candidateData.forEach(candidateDetails => {
                     // Create new row with candidate details
                     const row = document.createElement('tr');
+                    row.dataset.candidateId = candidateDetails.candidate_id; // Store candidate ID in dataset
                     row.innerHTML = `
                         <td>${candidateDetails.candidate_name}</td>
                         <td>${candidateDetails.candidate_email}</td>
@@ -175,24 +176,10 @@ async function displayCandidatesInPopup(requestId) {
                         <td>${candidateDetails.job_portal}</td>
                         <td>${candidateDetails.refered_by}</td>
                         <td>
-                            <a href="#" onclick="async function() {
-                                try {
-                                    const response = await fetch('http://localhost:3000/candidates/${candidateDetails.candidate_id}/resume');
-                                    if (!response.ok) {
-                                        throw new Error('Failed to fetch resume');
-                                    }
-                                    const blob = await response.blob();
-                                    const url = URL.createObjectURL(blob);
-                                    
-                                    const newTab = window.open(url, '_blank');
-                                    if (!newTab) {
-                                        throw new Error('Failed to open PDF in a new tab');
-                                    }
-                                } catch (error) {
-                                    console.error('Error viewing resume:', error);
-                                    alert('Failed to view resume. Please try again later.');
-                                }
-                            }()">View Resume</a>
+                            <a href="#" onclick="viewResume('${candidateDetails.candidate_id}')">View Resume</a>
+                        </td>
+                        <td>
+                            <button onclick="addFeedback('${candidateDetails.candidate_id}', '${requestId}', this)">Add Feedback</button>
                         </td>
                     `;
                     candidateBody.appendChild(row);
@@ -213,7 +200,6 @@ async function displayCandidatesInPopup(requestId) {
     }
 }
 
-        
 async function viewResume(candidateId) {
     try {
         const response = await fetch(`http://localhost:3000/candidates/${candidateId}/resume`);
@@ -233,23 +219,33 @@ async function viewResume(candidateId) {
     }
 }
 
-function openPopup() {
-    const popupContainer = document.getElementById('popupContainer');
-    if (popupContainer) {
-        popupContainer.style.display = 'flex';
-    } else {
-        console.error('Popup container element not found.');
+async function addFeedback(candidateId, requestId, buttonElement) {
+    try {
+        // Highlight the selected candidate row
+        const rows = document.querySelectorAll('#candidateBody tr');    
+        rows.forEach(row => {
+            row.classList.remove('selected'); // Remove highlight from all rows
+        });
+        const selectedRow = buttonElement.closest('tr');
+        selectedRow.classList.add('selected'); // Add highlight to selected row
+
+        // Example: Redirect to a feedback page with candidateId and requestId as query parameters
+        window.location.href = `feedback.html?candidateId=${candidateId}&requestId=${requestId}`;
+    } catch (error) {
+        console.error('Error adding feedback:', error);
+        alert('Failed to add feedback. Please try again later.');
     }
 }
 
-function closePopup() {
-    const popupContainer = document.getElementById('popupContainer');
-    if (popupContainer) {
-        popupContainer.style.display = 'none';
-    } else {
-        console.error('Popup container element not found.');
-    }
+function openPopup() {
+    document.getElementById('popupContainer').style.display = 'block';
 }
+
+function closePopup() {
+    document.getElementById('popupContainer').style.display = 'none';
+}
+// Other functions like applySearch(), refreshJobRequests(), etc. can be implemented as needed.
+
 
 function applySearch() {
     const filterValue = document.getElementById('searchInput').value.trim().toLowerCase();
