@@ -20,12 +20,13 @@
 
         .container {
             width: 100%;
-            padding: 34px; /* Increased padding for better spacing */
-            background-color: #ffffff; /* White background */
+            padding: 20px; /* Adjusted padding for spacing */
+            background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
-            margin-top: 20px; /* Adjusted margin-top */
+            margin-top: 20px;
+            position: relative; /* Added position relative for absolute positioning inside */
         }
 
         h1 {
@@ -43,7 +44,8 @@
             color: #333;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            overflow-x: auto; /* Enable horizontal scrolling */
+            overflow-x: auto;
+            padding: 15px; /* Adjusted padding for spacing */
         }
 
         thead {
@@ -115,138 +117,169 @@
         td[contenteditable="true"]:focus {
             outline: none; /* Remove outline completely */
         }
+
+        .additional-actions {
+            position: absolute;
+            top: 20px; /* Adjust top position as needed */
+            right: 20px; /* Adjust right position as needed */
+        }
+
+        .additional-actions button {
+            background-color: #1f6feb;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .additional-actions button:hover {
+            background-color: #1255a8;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Candidate Feedback</h1>
-        <div style="overflow-x:auto;">
-            <table id="feedbackTable">
-                <thead>
-                    <tr>
-                        <th>Candidate Name</th>
-                        <th>Candidate Email</th>
-                        <th>Type of Interview</th>
-                        <th>Mode of Interview</th>
-                        <th>Stage</th>
-                        <th>Timing</th>
-                        <th>Interviewer Name</th>
-                        <th>Status</th>
-                        <th>Feedback</th>
-                        <th>Score</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="feedbackData">
-                    <!-- Data rows will be dynamically added here -->
-                </tbody>
-            </table>
-        </div>
+
+<div class="container">
+    <h1>Candidate Feedback</h1>
+
+    <div class="additional-actions">
+        <button onclick="redirectToCandidates()">Back to candidates</button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const feedbackTableBody = document.getElementById('feedbackData');
+    <table id="feedbackTable">
+        <thead>
+            <tr>
+                <th>Candidate Name</th>
+                <th>Candidate Email</th>
+                <th>Type of Interview</th>
+                <th>Mode of Interview</th>
+                <th>Stage</th>
+                <th>Timing</th>
+                <th>Interviewer Name</th>
+                <th>Status</th>
+                <th>Feedback</th>
+                <th>Score</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="feedbackData">
+            <!-- Data rows will be dynamically added here -->
+        </tbody>
+    </table>
+</div>
 
-            function updateCandidateFeedback(interview) {
-                const requestedCandidateId = interview.requested_candidate_id;
-                const row = feedbackTableBody.querySelector(`tr[data-requested-candidate-id="${requestedCandidateId}"]`);
-                if (row) {
-                    row.querySelector('td:nth-child(8) select').value = interview.status || '';
-                    row.querySelector('td:nth-child(9)').textContent = interview.feedback || '';
-                    row.querySelector('td:nth-child(10)').textContent = interview.score || '';
+<script>
+    function redirectToCandidates() {
+        // Redirect to viewrequest.html with the popupContainer anchor
+        window.location.href = "viewrequest.html#popupContainer";
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const feedbackTableBody = document.getElementById('feedbackData');
+
+        function updateCandidateFeedback(interview) {
+            const requestedCandidateId = interview.requested_candidate_id;
+            const row = feedbackTableBody.querySelector(`tr[data-requested-candidate-id="${requestedCandidateId}"]`);
+            if (row) {
+                row.querySelector('td:nth-child(8) select').value = interview.status || '';
+                row.querySelector('td:nth-child(9)').textContent = interview.feedback || '';
+                row.querySelector('td:nth-child(10)').textContent = interview.score || '';
+            }
+        }
+
+        function fetchInterviews() {
+            fetch('http://localhost:3000/requested_candidates')
+                .then(response => response.json())
+                .then(interviews => {
+                    interviews.forEach(interview => {
+                        const row = createInterviewRow(interview);
+                        feedbackTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching requested candidates:', error));
+        }
+
+        function createInterviewRow(interview) {
+            const row = document.createElement('tr');
+            const requestedCandidateId = interview.requested_candidate_id;
+            const candidateId = interview.candidate_id; // Assuming this is available in your data
+
+            row.dataset.requestedCandidateId = requestedCandidateId; // Set dataset attribute for identification
+
+            row.innerHTML = `
+                <td>${interview.candidate_name}</td>
+                <td>${interview.candidate_email}</td>
+                <td>${interview.type_of_interview}</td>
+                <td>${interview.mode_of_interview}</td>
+                <td>${interview.stage_of_interview}</td>
+                <td>${interview.scheduled_interview_timing}</td>
+                <td>${interview.interviewer_name}</td>
+                <td>
+                    <select class="status-dropdown" data-requested-candidate-id="${requestedCandidateId}">
+                        <option value="selected" ${interview.status === 'selected' ? 'selected' : ''}>Selected</option>
+                        <option value="rejected" ${interview.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                    </select>
+                </td>
+                <td contenteditable="true" id="feedback-${requestedCandidateId}">${localStorage.getItem(`feedback-${requestedCandidateId}`) || interview.feedback || ''}</td>
+                <td contenteditable="true" id="score-${requestedCandidateId}">${localStorage.getItem(`score-${requestedCandidateId}`) || interview.score || ''}</td>
+                <td><button class="submit-button" data-requested-candidate-id="${requestedCandidateId}">Submit</button></td>
+            `;
+
+            const submitButton = row.querySelector('.submit-button');
+            submitButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent default form submission
+                const selectedStatus = row.querySelector('.status-dropdown').value;
+                const feedbackElem = row.querySelector(`#feedback-${requestedCandidateId}`);
+                const scoreElem = row.querySelector(`#score-${requestedCandidateId}`);
+
+                const feedback = feedbackElem.textContent.trim();
+                const score = scoreElem.textContent.trim();
+
+                const scoreNum = parseInt(score);
+                if (isNaN(scoreNum) || scoreNum < 1 || scoreNum > 10) {
+                    alert('Score must be a number between 1 and 10.');
+                    return;
                 }
-            }
 
-            function fetchInterviews() {
-                fetch('http://localhost:3000/requested_candidates')
-                    .then(response => response.json())
-                    .then(interviews => {
-                        interviews.forEach(interview => {
-                            const row = createInterviewRow(interview);
-                            feedbackTableBody.appendChild(row);
-                        });
+                const data = {
+                    feedback: feedback,
+                    score: scoreNum,
+                    status: selectedStatus,
+                };
+
+                fetch(`http://localhost:3000/requested_candidates/${requestedCandidateId}/feedback`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
                     })
-                    .catch(error => console.error('Error fetching requested candidates:', error));
-            }
+                    .then(updatedInterview => {
+                        // Update local storage
+                        localStorage.setItem(`feedback-${requestedCandidateId}`, feedback);
+                        localStorage.setItem(`score-${requestedCandidateId}`, score);
 
-            function createInterviewRow(interview) {
-                const row = document.createElement('tr');
-                const requestedCandidateId = interview.requested_candidate_id;
-                const candidateId = interview.candidate_id; // Assuming this is available in your data
-
-                row.dataset.requestedCandidateId = requestedCandidateId; // Set dataset attribute for identification
-
-                row.innerHTML = `
-                    <td>${interview.candidate_name}</td>
-                    <td>${interview.candidate_email}</td>
-                    <td>${interview.type_of_interview}</td>
-                    <td>${interview.mode_of_interview}</td>
-                    <td>${interview.stage_of_interview}</td>
-                    <td>${interview.scheduled_interview_timing}</td>
-                    <td>${interview.interviewer_name}</td>
-                    <td>
-                        <select class="status-dropdown" data-requested-candidate-id="${requestedCandidateId}">
-                            <option value="selected" ${interview.status === 'selected' ? 'selected' : ''}>Selected</option>
-                            <option value="rejected" ${interview.status === 'rejected' ? 'selected' : ''}>Rejected</option>
-                        </select>
-                    </td>
-                    <td contenteditable="true" id="feedback-${requestedCandidateId}">${localStorage.getItem(`feedback-${requestedCandidateId}`) || interview.feedback || ''}</td>
-                    <td contenteditable="true" id="score-${requestedCandidateId}">${localStorage.getItem(`score-${requestedCandidateId}`) || interview.score || ''}</td>
-                    <td><button class="submit-button" data-requested-candidate-id="${requestedCandidateId}">Submit</button></td>
-                `;
-
-                const submitButton = row.querySelector('.submit-button');
-                submitButton.addEventListener('click', function (event) {
-                    event.preventDefault(); // Prevent default form submission
-                    const selectedStatus = row.querySelector('.status-dropdown').value;
-                    const feedbackElem = row.querySelector(`#feedback-${requestedCandidateId}`);
-                    const scoreElem = row.querySelector(`#score-${requestedCandidateId}`);
-
-                    const feedback = feedbackElem.textContent.trim();
-                    const score = scoreElem.textContent.trim();
-
-                    const scoreNum = parseInt(score);
-                    if (isNaN(scoreNum) || scoreNum < 1 || scoreNum > 10) {
-                        alert('Score must be a number between 1 and 10.');
-                        return;
-                    }
-
-                    const data = {
-                        feedback: feedback,
-                        score: scoreNum,
-                        status: selectedStatus,
-                    };
-
-                    fetch(`http://localhost:3000/requested_candidates/${requestedCandidateId}/feedback`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
+                        // Update UI
+                        updateCandidateFeedback(updatedInterview);
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(updatedInterview => {
-                            // Update local storage
-                            localStorage.setItem(`feedback-${requestedCandidateId}`, feedback);
-                            localStorage.setItem(`score-${requestedCandidateId}`, score);
+                    .catch(error => console.error('Error submitting feedback:', error));
+            });
 
-                            // Update UI
-                            updateCandidateFeedback(updatedInterview);
-                        })
-                        .catch(error => console.error('Error submitting feedback:', error));
-                });
+            return row;
+        }
 
-                return row;
-            }
+        fetchInterviews();
+    });
+</script>
 
-            fetchInterviews();
-        });
-    </script>
 </body>
 </html>
