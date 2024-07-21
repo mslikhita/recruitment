@@ -13,14 +13,13 @@
 
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Enter search keyword">
-            <button onclick="applySearch()" id="searchButton"><i class="fas fa-search"></i></button>
+            <button onclick="applySearch()" id="searchButton" style="margin:0px;" ><i class="fas fa-search"></i></button>
             <button onclick="refreshJobRequests()" id="refreshButton"><i class="fas fa-sync-alt"></i></button>
         </div>
 
         <!-- Buttons for adding request and feedback -->
         <div class="additional-actions">
             <button onclick="redirectToAddRequest()">Add Job Request</button>
-            <button onclick="redirectToFeedback()">Add Feedback</button>
         </div>
 
         <table id="jobRequestTable">
@@ -77,10 +76,6 @@
     <script>
         function redirectToAddRequest() {
             window.location.href = "addrequest.html";
-        }
-
-        function redirectToFeedback() {
-            window.location.href = "feedback.html";
         }
     </script>
 </body>
