@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchJobRequests();
     setupPagination();
     closePopup(); // Ensure the popup is hidden when the page loads
+
+    // Bind applySearch() function to search input
+    document.getElementById('searchInput').addEventListener('input', applySearch);
 });
 
 async function fetchJobRequests() {
@@ -238,14 +241,14 @@ async function addFeedback(candidateId, requestId, buttonElement) {
 }
 
 function openPopup() {
-    document.getElementById('popupContainer').style.display = 'block';
+    const popupContainer = document.getElementById('popupContainer');
+    popupContainer.style.display = 'flex';
 }
 
 function closePopup() {
-    document.getElementById('popupContainer').style.display = 'none';
+    const popupContainer = document.getElementById('popupContainer');
+    popupContainer.style.display = 'none';
 }
-// Other functions like applySearch(), refreshJobRequests(), etc. can be implemented as needed.
-
 
 function applySearch() {
     const filterValue = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -271,5 +274,5 @@ function refreshJobRequests() {
     filteredJobRequests = jobRequests; // Reset filtered job requests to all job requests
     currentPage = 1; // Reset pagination to first page
     displayJobRequests(); // Redisplay all job requests
-    closePopup(); // Ensure the popup is hidden when refreshing
+    hidePopup(); // Ensure the popup is hidden when refreshing
 }
