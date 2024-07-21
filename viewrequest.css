@@ -1,0 +1,821 @@
+:root {
+    --primary-clr: #bb89ec;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+  }
+  /* nice scroll bar */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 50px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary-clr);
+    border-radius: 50px;
+  }
+  
+  body {
+    position: relative;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 30px;
+    background-color: #f7f6f7;
+  }
+  
+  
+  .container {
+    position: relative;
+    width: 1500px;
+    height: 900px;
+    margin: 0 auto;
+    padding: 5px;
+    color: #fff;
+    display: flex;
+    border-radius: 10px;
+    background-color: #373c4f;
+  }
+  
+  h1{
+  color:#3b4053;
+  }
+  
+  .Head-d{
+    text-align: center;
+    margin-bottom: 5px;
+    margin-top: 20px;
+    
+  }
+  
+  th,td{
+    padding: 5px;
+    text-align: justify;
+  }
+  
+  .userdetails {
+    height: 300px;
+    width: 1500px;
+    background: #353b50;
+    padding: 25px 30px;
+    /*margin-left: 25px;*/
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    border-radius: 5px;
+    position: relative;
+    margin: 0 auto;
+    justify-content: flex-end;
+    
+    
+  }
+  
+  
+   .userdetails .input-row{
+    width: calc(100% / 2 - 20px);
+   /*margin:20px 10px 5px 0;*/
+    }
+  
+  
+    .userdetails .input-row .details{
+      display: block;
+      font-weight: 600;
+      margin-bottom: 3px;
+      color: #fff;
+    
+    }
+  
+  
+    .userdetails .input-row input{
+      height: 45px;
+      width: 70%;
+      outline: none;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      padding-left: 15px;
+      font-size: 16px;
+    }
+  
+  
+  
+  
+  
+  .calendar {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    color: #373c4f;
+    border-radius: 5px;
+    background-color: #fdfcfd;
+  }
+  
+  
+  
+  
+  /* set after behind the main element */
+  
+  .calendar .month {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  
+  .date {
+    width:100%;/* Take up remaining space */
+    align-items: center;
+    text-align: center; /* Center the text */
+    font-size: 1.2rem; 
+    justify-content: center;/* Adjust font size as needed */
+  }
+  
+  .today-btn {
+    font-size: 1.0rem;
+    padding: 15px 20px;
+    border: 1px solid var(--primary-clr);
+    border-radius: 5px;
+    background-color: transparent;
+    cursor: pointer;
+    color: var(--primary-clr); /* Adjust font size as needed */
+    margin-right: 20px;
+    margin-top:20px;
+  }
+  
+  .calendar .goto-today .down-btn {
+    padding: 15px 20px;
+    border: 1px solid var(--primary-clr);
+    border-radius: 5px;
+    background-color: transparent;
+    cursor: pointer;
+    color: var(--primary-clr);
+  }
+  
+  .calendar .goto-today .save-btn {
+    padding: 15px 20px;
+    border: 1px solid var(--primary-clr);
+    border-radius: 5px;
+    background-color: transparent;
+    cursor: pointer;
+    color: var(--primary-clr);
+    margin-left: 1250px;
+  }
+  
+  
+  .calendar .month .prev,
+  .calendar .month .next {
+    cursor: pointer;
+  }
+  .calendar .month .prev:hover,
+  .calendar .month .next:hover {
+    color: var(--primary-clr);
+  }
+  .calendar .weekdays {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: capitalize;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .calendar .weekdays div {
+    width: 15%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .calendar .days {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 60px;
+    padding-right: 20px;
+  }
+  
+  
+  
+  .calendar .days .day {
+    width: 14.28%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--primary-clr);
+    border: 1px solid #c4c4c4;
+    height: 100px; /* Set a fixed height */
+    box-sizing: border-box; /* Include padding and border in the height */
+  
+  
+  }
+  
+  
+  
+  .calendar .days .day-input{
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .calendar .days .remarks{
+    width: 75%;
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .line {
+    width: 80%; /* Adjust the width of the line */
+    height: 1px; /* Adjust the thickness of the line */
+    background-color: #ccc; /* Line color */
+    margin: 5px 0; /* Space around the line */
+  }
+  
+  
+  .calendar .days .day:nth-child(7n + 1) {
+    border-left: 2px solid #c4c4c4;
+  }
+  .calendar .days .day:nth-child(7n) {
+    border-right: 2px solid #c4c4c4;
+  }
+  .calendar .days .day:nth-child(-n + 7) {
+    border-top: 2px solid #c4c4c4;
+  }
+  .calendar .days .day:nth-child(n + 29) {
+    border-bottom: 2px solid #c4c4c4;
+  }
+  
+  .calendar .days .day:not(.prev-date, .next-date):hover {
+    color: #fff;
+    background-color: var(--primary-clr);
+  }
+  .calendar .days .prev-date,
+  .calendar .days .next-date {
+    color: #b3b3b3;
+    
+  }
+  .calendar .days .active {
+    position: relative;
+    font-size: 1.2rem;
+    color: #fff;
+    background-color: var(--primary-clr);
+  }
+  .calendar .days .active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 0 10px 2px var(--primary-clr);
+  }
+  .calendar .days .today {
+    font-size: 2rem;
+  }
+  
+  
+  .calendar .goto-today {
+    width: 100%;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    color: var(--primary-clr);
+  }
+  
+  .calendar .goto-today .goto {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--primary-clr);
+  }
+  .calendar .goto-today .goto input {
+    width: 100%;
+    height: 30px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    padding: 0 20px;
+    color: var(--primary-clr);
+    border-radius: 5px;
+  }
+   
+  
+  .tasks {
+    position: relative;
+    width: 1500px;
+    height: 260px;
+    margin: 0 auto;
+    padding: 5px;
+    color: #fff;
+    border-radius: 10px;
+    background-color: #373c4f;
+    
+  }
+  
+  
+  
+  .today-task{
+    width: 1465px;
+    height: 160px;
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color:#373c4f;
+    position: relative;
+  }
+  
+  
+  
+  .today-day {
+  width: 80%;
+  height: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: safe;
+  padding-left: 30px;
+  margin-top: 5px;
+  text-transform: capitalize;
+  }
+  
+  
+  
+  .today-date {
+  width: 100%;
+    height: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 40px;
+    padding-left: 70px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    text-transform: capitalize;
+  }
+  
+  .today-date .event-day {
+  font-size: 1.5rem;
+  font-weight: 500;
+  }
+  
+  
+  .today-date .event-date {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #fff;
+  }
+  
+  
+  .events {
+    width: 100%;
+    height: 100%;
+    max-height: 100px;
+    display: flex;
+    flex-direction:row; 
+    padding-left: 4px;
+    gap: 5px;
+    scroll-behavior: smooth;
+  }
+  
+  
+  .events .event {
+  position: relative;
+  width: calc(25%-20px);
+  min-height: 80px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0 20px;
+  padding-left: 50px;
+  color: #fff;
+  background: linear-gradient(90deg, #3f4458, transparent);
+  cursor: pointer;
+  }
+  
+  .events-container::-webkit-scrollbar {
+  display: none;
+  }
+  
+  .events .event:nth-child(-n+4) {
+    display: flex; /* Show the first 4 events */
+  }
+  
+  
+  
+  .events .event:hover {
+  background: linear-gradient(90deg, var(--primary-clr), transparent);
+  }
+  .events .event .title {
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  }
+  .events .event .title .event-title {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 20px;
+  }
+  
+  .events .event  .event-desc {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 15px;
+  }
+  .events .event i {
+  color: var(--primary-clr);
+  font-size: 0.8rem;
+  }
+  
+  .events .event .event-time {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #878895;
+  margin-left: 15px;
+  pointer-events: none;
+  }
+  .events .event:hover .event-time {
+  color: #fff;
+  }
+  /* add tick in event after */
+  .events .event::after {
+  /* content: "✓";*/
+  position: absolute;
+  top: 50%;
+  right: 0;
+  font-size: 3rem;
+  line-height: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.3;
+  color: var(--primary-clr);
+  transform: translateY(-50%);
+  }
+  .events .event:hover::after {
+  display: flex;
+  }
+  .add-event {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #fff;
+  border: 2px solid #878895;
+  opacity: 0.5;
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+  }
+  .add-event:hover {
+  opacity: 1;
+  }
+  .add-event i {
+  pointer-events: none;
+  }
+  .events .no-event {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #fff;
+  }
+  
+  
+  .add-event-wrapper {
+  position: absolute;
+  bottom: 10px;
+  left: 52%;
+  width: 80%;
+  max-height: 0%;
+  overflow: hidden;
+  border-radius: 5px;
+  background-color: #fff;
+  transform: translateX(-50%);
+  transition: max-height 0.5s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .add-event-wrapper.active {
+  max-height: 350px;
+  }
+  .add-event-header {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: #373c4f;
+  border-bottom: 1px solid #f5f5f5;
+  }
+  .add-event-header .close {
+  font-size: 1.5rem;
+  cursor: pointer;
+  }
+  .add-event-header .close:hover {
+  color: var(--primary-clr);
+  }
+  .add-event-header .title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  }
+  .add-event-body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 20px;
+  }
+  .add-event-body .add-event-input {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  }
+  .add-event-body .add-event-input input {
+  width: 100%;
+  height: 100%;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #f5f5f5;
+  padding: 0 10px;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #373c4f;
+  }
+  .add-event-body .add-event-input input::placeholder {
+  color: #a5a5a5;
+  }
+  .add-event-body .add-event-input input:focus {
+  border-bottom: 1px solid var(--primary-clr);
+  }
+  .add-event-body .add-event-input input:focus::placeholder {
+  color: var(--primary-clr);
+  }
+  .add-event-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  }
+  .add-event-footer .add-event-btn {
+  height: 40px;
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  border: none;
+  color: #fff;
+  background-color: var(--primary-clr);
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid var(--primary-clr);
+  }
+  .add-event-footer .add-event-btn:hover {
+  background-color: transparent;
+  color: var(--primary-clr);
+  }
+  
+  
+  
+  .events-container {
+    width:95%;
+    max-width: 100%;
+    height: 100px; /* Fixed height to show only four events */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    white-space: nowrap;
+    position: relative;
+  
+    }
+   
+    
+     .scroll-button {
+      position: absolute; /* Position it absolutely within the relative container */
+      top: 50%; /* Center vertically */
+      right: 0; /* Align to the right */
+      transform: translateY(-50%); /* Adjust for perfect vertical centering */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+      color: #878895;
+      border: 2px solid #878895;
+      background-color: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0.5;
+    }
+  
+  
+    
+  
+  
+  
+    .scroll-button:hover {
+      opacity: 1;
+    }
+    
+    .scroll-button i {
+      pointer-events: none; /* Ensure the icon inside the button doesn't interfere with the button's functionality */
+    }
+  
+  
+  .footer-container-calendar{
+  display: flex; /* Use flexbox */
+  align-items: center; /* Align items vertically */
+  gap: 10px; 
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-left: -50px;
+  padding: 15px 20px;
+  border-radius: 5px;
+  background-color: transparent;
+  color: var(--primary-clr);
+  }
+  
+  
+  .dth {
+      width: 15%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 60px;
+      margin-left: 20px;
+      height: 500px; 
+  }
+  
+  .dth .dh {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--primary-clr);
+    border: 1px solid #c4c4c4;
+    flex-grow: 1;
+    flex-basis: 0;
+    min-height: 100px;
+  }
+  
+  .dynamic-table{
+    display: flex;
+  }
+  
+  
+  
+  
+   .dh span {
+    margin-top: 15px;
+    display: block;
+    font-size: 1.0rem;
+  
+  }
+  
+  
+  
+  hr {
+    border: 0;
+    height: 1px;
+    background:#c4c4c4;
+    width:100%
+  }
+  
+  
+   .tasks .task-adder {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 20px;
+   }
+  
+  
+  
+   .total-hrs-worked{
+    margin-top:5px;
+    margin-left:10px;
+   }
+  
+  
+   .separator {
+    width: 100%;
+    height: 2px; /* Thickness of the line */
+    background-color: black; /* Color of the line */
+    margin: 20px 0; /* Space around the line */
+  }
+  
+  
+  .edit-button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+  .edit-button i {
+    margin-right: 5px;
+  }
+  
+  .event-checkbox{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    height: 20px;
+    width: 18px;
+  }
+  /* Additional CSS for positioning */
+  .additional-actions {
+    position: absolute;
+    top: 20px; /* Adjust top position as needed */
+    right: 20px; /* Adjust right position as needed */
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: flex-end; /* Align items to the end of the container */
+}
+
+.additional-actions button {
+    margin-top: 10px; /* Adjust spacing between buttons */
+    background-color: #1f6feb; /* Bright blue for buttons */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.additional-actions button:hover {
+    background-color: #1a5bb8; /* Darker blue on hover */
+}
+  
