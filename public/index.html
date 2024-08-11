@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta tags for character encoding, compatibility, viewport settings, description, and keywords -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Stay organized with our user-friendly Calendar featuring events, reminders, and a customizable interface. Built with HTML, CSS, and JavaScript. Start scheduling today!"
+    />
+    <meta
+      name="keywords"
+      content="calendar, events, reminders, javascript, html, css, open source coding"
+    />
+    
+    <!-- Links to external stylesheets (Font Awesome and custom styles) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+      integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <!-- Document title -->
+    <title>Calendar with Events</title>
+  </head>
+  <body>
+    <!-- Header section -->
+    <div class="Head-d">
+      <h1>TIME SHEET OF THE MONTH FOR THE YEAR</h1>
+    </div>
+
+    <!-- User details form section -->
+    <div class="userdetails">
+      <!-- Employee name input -->
+      <div class="input-row">
+        <span class="details">Employee Name:</span>
+        <input type="text" id="name" placeholder="Employee name">
+      </div>
+      <!-- Employee number input -->
+      <div class="input-row">
+        <span class="details">Employee Number:</span>
+        <input type="text" id="employeeNumber" placeholder="Employee Number">
+      </div>
+      <!-- Client input -->
+      <div class="input-row">
+        <span class="details">Client:</span>
+        <input type="text" id="client" placeholder="Client">
+      </div>
+      <!-- Working hours input -->
+      <div class="input-row">
+        <span class="details">Working hours:</span>
+        <input type="text" id="workingHours" placeholder="Working Hours">
+      </div>
+      <!-- Weekly holidays input -->
+      <div class="input-row">
+        <span class="details">Weekly Holidays:</span>
+        <input type="text" value="Saturday and Sunday">
+      </div>
+      <!-- Location input -->
+      <div class="input-row">
+        <span class="details">Location:</span>
+        <input type="text" id="location" placeholder="Location">
+      </div>
+    </div>
+
+    <!-- Calendar container -->
+    <div class="container">
+      <div class="calendar">
+        <!-- Calendar navigation -->
+        <div class="month">
+          <i class="fas fa-angle-left prev"></i>
+          <div class="date"></div>
+          <button class="today-btn">Today</button>
+          <i class="fas fa-angle-right next"></i>
+        </div>
+        <div class="footer-container-calendar">
+          <!-- Dropdowns to select a specific month and year -->
+          <select id="month" onchange="jump()">
+            <option value="0">Jan</option>
+            <option value="1">Feb</option>
+            <option value="2">Mar</option>
+            <option value="3">Apr</option>
+            <option value="4">May</option>
+            <option value="5">Jun</option>
+            <option value="6">Jul</option>
+            <option value="7">Aug</option>
+            <option value="8">Sep</option>
+            <option value="9">Oct</option>
+            <option value="10">Nov</option>
+            <option value="11">Dec</option>
+          </select>
+          <!-- Dropdown to select a specific year -->
+          <select id="year" onchange="jump()"></select>
+        </div>
+        <!-- Calendar days and hours header -->
+        <div class="weekdays">
+          <div>Date and Hours</div>
+          <div>Sunday</div>
+          <div>Monday</div>
+          <div>Tuesday</div>
+          <div>Wednesday</div>
+          <div>Thursday</div>
+          <div>Friday</div>
+          <div>Saturday</div>
+        </div>
+        <!-- Calendar dynamic table -->
+        <div class="dynamic-table">
+          <div class="dth">
+            <div class="dh">Date<hr><span>Working Hours</span><hr><span>Remarks</span></div>
+            <div class="dh">Date<hr><span>Working Hours</span><hr><span>Remarks</span></div>
+            <div class="dh">Date<hr><span>Working Hours</span><hr><span>Remarks</span></div>
+            <div class="dh">Date<hr><span>Working Hours</span><hr><span>Remarks</span></div>
+            <div class="dh">Date<hr><span>Working Hours</span><hr><span>Remarks</span></div>
+            <div class="dh">Date<hr><span>Working Hours</span><hr><span>Remarks</span></div>
+          </div>
+          <div class="days">
+            <!-- JavaScript will populate calendar days here -->
+          </div>
+        </div>
+        <!-- Calendar action buttons -->
+        <div class="goto-today">
+          <button class="down-btn">Download</button>
+          <button class="save-btn">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript file -->
+    <script src="script.js"></script>
+  </body>
+</html>

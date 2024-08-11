@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Request Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+       /* Reset and general styles */
+       body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items from the top */
+    min-height: 100vh; /* Full viewport height */
+    min-width: 100vw; /* Full viewport width */
+}
+
+/* Container styles */
+.container {
+    width: 39%;
+    padding: 34px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #333333; /* Dark text color */
+    margin-top: 15px; /* Adjusted margin-top */
+    margin-bottom: 20px; /* Adjusted margin-bottom */
+    margin-left: auto;
+    margin-right: auto;
+    position: relative; /* Ensure relative positioning for absolute elements */
+}
+
+h1 {
+    font-size: 24px;
+    color: #060301;
+    margin-bottom: 50px; /* Adjusted margin for spacing */
+    margin-top: -3px;
+}
+
+/* Input styles */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    color: #1f1007;
+    margin-bottom: 5px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: -35px; /* Added margin for spacing */
+}
+
+.input-wrapper label {
+    margin-right: 33px;
+    width: 125px; /* Adjusted width of labels */
+    text-align: left;
+}
+
+
+.input-wrapper input,
+.input-wrapper select {
+
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 50px
+}
+
+.input-wrapper textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 42px;
+    flex: 1; /* Take remaining space within the flex container */
+    min-height: 100px; /* Example of minimum height */
+}
+.input-group input,
+.input-group textarea,
+.input-group select {
+   
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 39px; /* Adjusted margin for spacing */
+    min-height: 33px; /* Example of specific height */
+    width: 270px; /* Example of specific width */
+    box-sizing: border-box; /* Ensures padding and border are included in width */
+}
+
+/* Adjust specific fields as needed */
+.input-group #eid {
+    width: 54%; /* Adjusted width for Employee ID */
+    margin-bottom: 39px; /* Equal margin for Employee ID */
+}
+
+.input-group #jobDescription {
+    min-height: 50px; /* Example of specific height for Job Description */
+    margin-bottom: 19px; /* Equal margin for Job Description */
+}
+
+.input-group #skills {
+    margin-bottom: 21px; /* Equal margin for Skills textarea */
+}
+
+.input-group #experience {
+    margin-bottom: 39px; /* Equal margin for Experience */
+}
+
+.input-group #designation {
+    margin-bottom: 26px; /* Equal margin for Designation */
+}
+
+.input-group #recruiter_email {
+    margin-bottom: 26px; /* Equal margin for Email Address */
+}
+
+/* Additional styles for textarea */
+textarea {
+    resize: vertical; /* Allow vertical resizing */
+}
+
+
+
+/* Inline group styles */
+.inline-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.inline-group .input-group {
+    flex-basis: calc(50% - 20px);
+}
+
+/* Button styles */
+button {
+    width: 200px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    background: #007BFF;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 37px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* Message and links styles */
+.message {
+    margin-top: 10px;
+    color: #101f1f;
+    font-size: 14px;
+}
+
+.links {
+    margin-top: 20px;
+}
+
+.links a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
+/* Icon styles (assuming FontAwesome icons are used) */
+.fa-file-alt, .fa-file-pdf, .fa-briefcase, .fa-tools, .fa-envelope, .fa-hourglass-half {
+    color: white;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><u>JOB REQUEST PORTAL</u></h1>
+        <form id="requestForm" enctype="multipart/form-data">
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <label>Employee ID</label>
+                    <input type="text" id="eid" name="eid" placeholder="Enter Employee ID" required>
+                </div>
+            </div>
+            <div class="inline-group">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label>Job Description</label>
+                        <textarea id="jobDescription" name="job_description_text" placeholder="Enter job description" required></textarea>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label>Select the file</label>
+                        <input type="file" id="jobDescriptionFile" name="job_description_file">
+                    </div>
+                </div>
+            </div>
+            <div class="inline-group">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label>Skills</label>
+                        <select id="skills" name="skills" required>
+                            <option value="">Select a skill</option>
+                            <option value="java">Java</option>
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="php">PHP</option>
+                            <option value="csharp">C#</option>
+                            <option value="ruby">Ruby</option>
+                            <option value="swift">Swift</option>
+                            <option value="kotlin">Kotlin</option>
+                            <option value="typescript">TypeScript</option>
+                            <option value="go">Go</option>
+                            <option value="htmlcss">HTML/CSS</option>
+                            <option value="react">React.js</option>
+                            <option value="angular">Angular</option>
+                            <option value="vue">Vue.js</option>
+                            <option value="node">Node.js</option>
+                            <option value="django">Django</option>
+                            <option value="flask">Flask</option>
+                            <option value="aspnet">ASP.NET</option>
+                            <option value="laravel">Laravel</option>
+                            <option value="express">Express.js</option>
+                            <option value="mysql">MySQL</option>
+                            <option value="postgresql">PostgreSQL</option>
+                            <option value="mongodb">MongoDB</option>
+                            <option value="sqlserver">SQL Server</option>
+                            <option value="oracle">Oracle Database</option>
+                            <option value="ios">iOS Development</option>
+                            <option value="android">Android Development</option>
+                            <option value="flutter">Flutter</option>
+                            <option value="reactnative">React Native</option>
+                            <option value="matlab">MATLAB</option>
+                            <option value="sas">SAS</option>
+                            <option value="spss">SPSS</option>
+                            <option value="spark">Apache Spark</option>
+                            <option value="hadoop">Hadoop</option>
+                            <option value="aws">AWS (Amazon Web Services)</option>
+                            <option value="azure">Azure</option>
+                            <option value="gcp">Google Cloud Platform</option>
+                            <option value="ibmcloud">IBM Cloud</option>
+                            <option value="git">Git</option>
+                            <option value="svn">SVN</option>
+                            <option value="devops">DevOps</option>
+                            <option value="agile">Agile Methodologies</option>
+                            <option value="uiux">UI/UX Design</option>
+                            <option value="tdd">Test-Driven Development (TDD)</option>
+                            <option value="cicd">Continuous Integration/Continuous Deployment (CI/CD)</option>
+                            <option value="ml">Machine Learning</option>
+                            <option value="ai">Artificial Intelligence</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label>Experience</label>
+                        <select id="experience" name="experience" required>
+                            <option value="">Select years of experience</option>
+                            <option value="0.5">0-6 months</option>
+                            <option value="1">1 year</option>
+                            <option value="2">2 years</option>
+                            <option value="3">3 years</option>
+                            <option value="4">4 years</option>
+                            <option value="5">5 years</option>
+                            <option value="6">6 years</option>
+                            <option value="7">7 years</option>
+                            <option value="8">8 years</option>
+                            <option value="9">9 years</option>
+                            <option value="10+">10+ years</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="inline-group">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label>Designation</label>
+                        <input type="text" id="designation" name="designation" placeholder="Enter designation" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label>Email Address</label>
+                        <input type="text" id="recruiter_email" name="recruiter_email" placeholder="Enter email(s), separated by commas" required>
+                     </div>
+                </div>
+            </div>
+            <button type="submit">Submit</button>
+            <div class="message" id="message"></div>
+        </form>
+    </div>
+    <script  src="addrequest.js"></script>
+    
+    
+</body>
+</html>

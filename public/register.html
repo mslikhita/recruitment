@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <!-- Include Bootstrap for styling (optional) -->
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">-->
+    <style>
+        /* Center the form horizontally and vertically */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #bccee7;
+
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+/* Center the heading */
+h2 {
+    text-align: center;
+}
+
+/* Ensure each form group takes the full width of the parent */
+.form-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Custom styles for the input fields */
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Add some margin to the buttons */
+.btn-primary {
+    margin-top: 10px;
+}
+/* Add your custom styles here */
+ .error-message {
+            color: red;
+        }
+    
+
+    </style>
+</head>
+<body>
+        <div class="container mt-5">
+            <h2 class="mb-4">Register</h2>
+            <form id="registerForm" action="/register" method="POST">
+                <div class="form-group">
+                    <label for="eid"><b>Employee-id:</b></label>
+                    <input type="eid" class="form-control" id="eid" name="eid" placeholder="Enter your Employee-id" required>
+                    <span id="eid-error" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email"><b>Email:</b></label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                    <span id="email-error" class="error-message"></span>
+                   </div> 
+                <div class="form-group">
+                    <label for="employeeName"><b>Employee Name:</b></label>
+                    <input type="text" class="form-control" id="employeeName" name="employeeName" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="client"><b>Client:</b></label>
+                    <input type="text" class="form-control" id="client" name="client" placeholder="Enter your client" required>
+                </div>
+                <div class="form-group">
+                    <label for="location"><b>Location:</b></label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="Enter your location" required>
+                </div>
+                <div class="form-group">
+                    <label for="workingHours"><b>Working Hours:</b></label>
+                    <input type="text" class="form-control" id="workingHours" name="workingHours" value="9" readonly >
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+                <div id="form-message" class="error-message"></div>
+            </form>   
+         </div>    
+
+    <!-- Optional: Include Bootstrap JS for client-side functionality (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js" integrity="sha384-ZhqxMmS3zMCbcPL5jvY0N8rJGp3VmubJWvAq44LkO+JJ+q0aD/bjAvmwNR8hjVl" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="register.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,341 @@
+/* General Styles */
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items from the top */
+    min-height: 100vh; /* Full viewport height */
+    min-width: 100vw; /* Full viewport width */
+}
+
+/* Main Container Styles */
+#jobRequestList {       
+    width: 100%;
+    padding: 34px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #333333; /* Dark text color */
+    margin-top: 0; /* Adjusted margin-top */
+    margin-bottom: 0; /* Adjusted margin-bottom */
+    margin-left: auto;
+    margin-right: auto;
+    position: relative; /* Ensure relative positioning for absolute elements */
+}
+
+/* Style for the Status dropdown */
+#jobRequestTable select {
+    width: 110px; /* Make the dropdown take up the full width of its cell */
+    padding: 8px; /* Add some padding inside the dropdown */
+    border: 1px solid #ccc; /* Add a border to make it stand out */
+    border-radius: 4px; /* Round the corners of the border */
+    background-color: #fff; /* Set the background color of the dropdown */
+    font-size: 14px; /* Set the font size inside the dropdown */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+}
+
+/* Style for the dropdown options */
+#jobRequestTable select option {
+    padding: 8px; /* Add some padding to the options */
+    background-color: #fff; /* Set the background color for the options */
+    color: #333; /* Set the text color for the options */
+}
+
+
+/* Dropdown Container Styles */
+.dropdown-container {
+    position: absolute; /* Position absolutely within #jobRequestList */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right (default position) */
+    display: flex; /* Use flexbox to arrange dropdowns side by side */
+    gap: 10px; /* Space between dropdowns */
+    z-index: 10; /* Ensure dropdowns are above other content */
+}
+
+/* Candidate Dropdown Styles */
+.candidates-dropdown select {
+    padding: 5px 15px;
+    border-radius: 5px;
+    background-color: #f9f9f9; /* Light blue background */
+    font-size: 15px;
+    width: 129px; /* Set width */
+    box-sizing: border-box;
+    margin-right: -5px; /* Adjust margin to move left */
+}
+
+/* Interview Dropdown Styles */
+.interviews-dropdown select {
+    padding: 5px 15px;
+    border-radius: 5px;
+    background-color: #f9f9f9; /* Light green background */
+    font-size: 15px;
+    width: 121px; /* Set width */
+    box-sizing: border-box;
+    margin-right: -17px; /* Ensure no extra left margin */
+}
+
+/* Optionally adjust container positioning */
+.dropdown-container.left-adjusted {
+    right: 60px; /* Move the entire container to the left */
+}
+
+
+/* Search Container Styles */
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-container input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    margin-right: 5px; /* Adjusted margin */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.search-container button {
+    padding: 10px 20px;
+    margin: 12px;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px; /* Adjusted margin */
+}
+
+.search-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Table Styles */
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333; /* Dark text color */
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    text-align: left;
+    background-color: #f2f2f2; /* Light gray background */
+    color: #333; /* Dark text color */
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+thead {
+    background-color: #1f2333; /* Dark header background */
+    color: #ffffff; /* White text color */
+}
+
+thead th {
+    padding: 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #283e51; /* Dark bottom border */
+    text-align: center;
+}
+
+tbody tr {
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #ffffff; /* White background for even rows */
+}
+
+tbody tr:hover {
+    background-color: #f2f2f2; /* Hover background */
+}
+
+tbody td {
+    padding: 15px;
+    border-top: 1px solid #ccc; /* Light border */
+}
+
+tbody td:last-child {
+    text-align: center;
+}
+
+/* Action Styles */
+a {
+    color: #1f6feb; /* Blue for links */
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+a:hover {
+    background-color: #1a5bb8; /* Darker blue on hover */
+    color: white;
+}
+
+button {
+    background-color: #1f6feb; /* Bright blue for buttons */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #1a5bb8; /* Darker blue on hover */
+}
+
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #1f6feb; /* Bright blue for pagination buttons */
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.pagination button.active {
+    background-color: #58a6ff; /* Light blue for active page button */
+}
+
+.pagination button.active:hover {
+    background-color: #8fbfef; /* Lighter blue on hover for active button */
+}
+
+.pagination button:hover {
+    background-color: #2c7bb6; /* Darker blue on hover for inactive buttons */
+}
+
+.pagination button.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: #30363d; /* Dark background for disabled buttons */
+}
+
+/* Style for the popup container */
+.popup-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff; /* White background */
+    border: 1px solid #ccc;
+    padding: 0px;
+    max-width: 90%; /* Adjust as needed */
+    max-height: 90vh; /* Adjust as needed */
+    overflow-y: auto;
+    z-index: 1000; /* Ensure popup is above other elements */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+    border-radius: 8px; /* Optional: Rounded corners */
+    color: #333333; /* Dark text color */
+}
+
+.popup-content {
+    background-color: #ffffff; /* White background */
+    padding: 22px; /* Increased padding */
+    width: 100%; /* Match popup container width */
+    max-width: 100%; /* Maximum width */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: auto; /* Enable scrolling if content exceeds height */
+    z-index: 1001; /* Ensure content is above popup container background */
+}
+
+/* Style for the close button */
+.close {
+    position: absolute; /* Position it relative to the popup content */
+    left: 10px; /* Align to the left side of the popup */
+    top: 10px; /* Align to the top of the popup */
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+    z-index: 1001; /* Ensure the close button is above the popup content */
+}
+
+.close:hover {
+    color: black; /* Change color on hover for better visibility */
+}
+
+
+.popup-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; /* Adjusted margin */
+}
+
+.popup-content th,
+.popup-content td {
+    padding: 12px; /* Adjusted padding */
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.centered-text {
+    text-align: center;
+}
+
+.popup-content button {
+    background-color: #1f6feb; /* Bright blue for buttons */
+    color: white;
+    border: none;
+    padding: 5px 15px; /* Adjusted padding */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.3s;
+    margin-top: 5px;
+    width: 107px; /* Set width */
+    height: 44px; /* Set height */
+}
+
+.popup-content button:hover {
+    background-color: #1a5bb8; /* Darker blue on hover */
+}
+
+#closePopupBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1100; /* Ensure above other popup content */
+}
+
+#closePopupBtn span {
+    font-size: 24px;
+    font-weight: bold;
+}

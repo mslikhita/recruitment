@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Schedule Interview</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            min-width: 100vw;
+        }
+
+        .container {
+            width: 100%;
+            padding: 34px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: #333333;
+            margin-top: 0;
+            margin-bottom: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #060301;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #1f2333;
+            color: #ffffff;
+        }
+
+        thead th {
+            padding: 15px;
+            font-size: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #283e51;
+        }
+                          /* Add fixed widths for each column */
+thead th:nth-child(1), tbody td:nth-child(1) {
+    width: 15%; /* Candidate Name */
+}
+
+thead th:nth-child(2), tbody td:nth-child(2) {
+    width: 20%; /* Candidate Email ID */
+}
+
+thead th:nth-child(3), tbody td:nth-child(3) {
+    width: 15%; /* Type of Interview */
+}
+
+thead th:nth-child(4), tbody td:nth-child(4) {
+    width: 15%; /* Mode of Interview */
+}
+
+thead th:nth-child(5), tbody td:nth-child(5) {
+    width: 13%; /* Stage */
+}
+
+thead th:nth-child(6), tbody td:nth-child(6) {
+    width: 19%; /* Timing */
+}
+
+thead th:nth-child(7), tbody td:nth-child(7) {
+    width: 15%; /* Interviewer Name */
+}
+
+thead th:nth-child(8), tbody td:nth-child(8) {
+    width: 10%; /* Action */
+}
+
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        tbody tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        .dropdown {
+            width: 88%;
+            max-width: 200px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .dropdown select {
+            width: 100%;
+            border: none;
+            outline: none;
+            background-color: #fff;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .timing-of-interview {
+            width: 150px;
+            text-align: center;
+        }
+     
+        .timing-of-interview input[type="datetime-local"] {
+            width: 88%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        .schedule-button {
+            background-color: #1f6feb;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .schedule-button:hover {
+            background-color: #1527ca;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        .search-button,
+        .refresh-button {
+            background-color: #1f6feb;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            margin-right: 5px;
+        }
+
+        .search-button:hover,
+        .refresh-button:hover {
+            background-color: #1527ca;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            #searchInput {
+                width: auto;
+                margin-right: 5px;
+            }
+
+            .search-button,
+            .refresh-button {
+                padding: 8px 10px;
+            }
+        }
+
+        .additional-actions {
+            position: absolute;
+            top: 5px;
+            right: 40px;
+        }
+
+        .additional-actions button {
+            background-color: #1f6feb;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.3s;
+        }
+
+        .additional-actions button:hover {
+            background-color: #1255a8;
+        }
+        
+        .schedule-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            color: #666666;
+            border: 1px solid #999999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SCHEDULING CANDIDATE INTERVIEW</h1>
+
+        <div class="additional-actions">
+            <button onclick="redirectToCandidates()">Back</button>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter search keyword...">
+            <button class="search-button"><i class="fas fa-search"></i></button>
+            <button class="refresh-button"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        <div style="overflow-x:auto;">
+            <table id="interviewTable">
+                <thead>
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Candidate Email ID</th>
+                        <th>Type of Interview</th>
+                        <th>Mode of Interview</th>
+                        <th>Stage</th>
+                        <th>Timing</th>
+                        <th>Interviewer Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="interviewData">
+                    <!-- Data will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function redirectToCandidates() {
+            window.location.href = "requestlist.html";
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const interviewTableBody = document.getElementById('interviewData');
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.querySelector('.search-button');
+            const refreshButton = document.querySelector('.refresh-button');
+
+            function formatDateTimeForLocalInput(dateTimeString) {
+                if (!dateTimeString) return '';
+                
+                // Convert to a Date object
+                const date = new Date(dateTimeString);
+                
+                // Extract parts of the date in the required format
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                
+                // Return formatted string
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            function createCandidateRow(candidate) {
+    const row = document.createElement('tr');
+    row.setAttribute('data-candidate-id', candidate.requested_candidate_id); // Set a data attribute to uniquely identify the row
+
+    row.innerHTML = `
+        <td>${candidate.candidate_name || ''}</td>
+        <td>${candidate.candidate_email || ''}</td>
+        <td class="type-of-interview">
+            <div class="dropdown">
+                <select>
+                    <option value="">Select Type</option>
+                    <option value="Face to Face" ${candidate.type_of_interview === 'Face to Face' ? 'selected' : ''}>Face to Face</option>
+                    <option value="Video Interview" ${candidate.type_of_interview === 'Video Interview' ? 'selected' : ''}>Video Interview</option>
+                    <option value="Telephonic" ${candidate.type_of_interview === 'Telephonic' ? 'selected' : ''}>Telephonic</option>
+                </select>
+            </div>
+        </td>
+        <td class="mode-of-interview">
+            <div class="dropdown">
+                <select>
+                    <option value="">Select Mode</option>
+                    <option value="Technical" ${candidate.mode_of_interview === 'Technical' ? 'selected' : ''}>Technical</option>
+                    <option value="HR" ${candidate.mode_of_interview === 'HR' ? 'selected' : ''}>HR</option>
+                </select>
+            </div>
+        </td>
+        <td class="stage-of-interview">
+            <div class="dropdown">
+                <select>
+                    <option value="">Select Stage</option>
+                    <option value="Round 1" ${candidate.stage_of_interview === 'Round 1' ? 'selected' : ''}>Round 1</option>
+                    <option value="Round 2" ${candidate.stage_of_interview === 'Round 2' ? 'selected' : ''}>Round 2</option>
+                    <option value="Round 3" ${candidate.stage_of_interview === 'Round 3' ? 'selected' : ''}>Round 3</option>
+                    <option value="Final" ${candidate.stage_of_interview === 'Final' ? 'selected' : ''}>Final</option>
+                </select>
+            </div>
+        </td>
+        <td class="timing-of-interview">
+            <input type="datetime-local" value="${formatDateTimeForLocalInput(candidate.scheduled_interview_timing)}">
+        </td>
+        <td class="interviewer-name">
+            ${candidate.interviewer_name || ''}
+        </td>
+        <td><button class="schedule-button" data-candidate-id="${candidate.requested_candidate_id}">Schedule</button></td>
+    `;
+
+    // Check if the button should be disabled
+    const button = row.querySelector('.schedule-button');
+    if (localStorage.getItem(`buttonDisabled_${candidate.requested_candidate_id}`) === 'true') {
+        button.disabled = true;
+        button.classList.add('disabled');
+    }
+
+    // Rest of the function remains the same
+    const typeDropdown = row.querySelector('.type-of-interview select');
+    const modeDropdown = row.querySelector('.mode-of-interview select');
+    const stageDropdown = row.querySelector('.stage-of-interview select');
+    const timingInput = row.querySelector('.timing-of-interview input');
+
+    typeDropdown.value = localStorage.getItem(`selectedType_${candidate.requested_candidate_id}`) || '';
+    modeDropdown.value = localStorage.getItem(`selectedMode_${candidate.requested_candidate_id}`) || '';
+    stageDropdown.value = localStorage.getItem(`selectedStage_${candidate.requested_candidate_id}`) || '';
+    timingInput.value = localStorage.getItem(`selectedTiming_${candidate.requested_candidate_id}`) || '';
+
+    typeDropdown.addEventListener('change', function () {
+        localStorage.setItem(`selectedType_${candidate.requested_candidate_id}`, this.value);
+    });
+
+    modeDropdown.addEventListener('change', function () {
+        localStorage.setItem(`selectedMode_${candidate.requested_candidate_id}`, this.value);
+    });
+
+    stageDropdown.addEventListener('change', function () {
+        localStorage.setItem(`selectedStage_${candidate.requested_candidate_id}`, this.value);
+    });
+
+    timingInput.addEventListener('change', function () {
+        localStorage.setItem(`selectedTiming_${candidate.requested_candidate_id}`, this.value);
+    });
+
+    button.addEventListener('click', function () {
+        const candidateId = this.getAttribute('data-candidate-id');
+        const typeOfInterview = row.querySelector('.type-of-interview select').value;
+        const modeOfInterview = row.querySelector('.mode-of-interview select').value;
+        const stageOfInterview = row.querySelector('.stage-of-interview select').value;
+        const timingOfInterview = row.querySelector('.timing-of-interview input').value;
+        const interviewerName = row.querySelector('.interviewer-name').textContent.trim();
+
+        let additionalDetailsPrompt;
+        if (typeOfInterview === 'Face to Face') {
+            additionalDetailsPrompt = 'Please enter the location for the Face to Face interview:';
+        } else if (typeOfInterview === 'Video Interview') {
+            additionalDetailsPrompt = 'Please enter the meeting link for the Video Interview:';
+        } else {
+            additionalDetailsPrompt = null;
+        }
+
+        if (additionalDetailsPrompt) {
+            const additionalDetails = prompt(additionalDetailsPrompt);
+            if (!additionalDetails) {
+                let requiredField;
+                if (typeOfInterview === 'Face to Face') {
+                    requiredField = 'Location';
+                } else if (typeOfInterview === 'Video Interview') {
+                    requiredField = 'Meeting Link';
+                } else {
+                    requiredField = 'details';
+                }
+                alert(`${requiredField} is required for ${typeOfInterview} interview.`);
+                return;
+            }
+
+            const confirmation = confirm(`Are you sure you want to schedule the interview with the following details?\nType: ${typeOfInterview}\nMode: ${modeOfInterview}\nStage: ${stageOfInterview}\nTiming: ${timingOfInterview}\nInterviewer: ${interviewerName}\nAdditional Details: ${additionalDetails || 'None'}`);
+            if (confirmation) {
+                scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName, additionalDetails);
+            }
+        } else {
+            const confirmation = confirm(`Are you sure you want to schedule the interview with the following details?\nType: ${typeOfInterview}\nMode: ${modeOfInterview}\nStage: ${stageOfInterview}\nTiming: ${timingOfInterview}\nInterviewer: ${interviewerName}`);
+            if (confirmation) {
+                scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName);
+            }
+        }
+    });
+
+    return row;
+}
+            function scheduleInterview(candidateId, typeOfInterview, modeOfInterview, stageOfInterview, timingOfInterview, interviewerName, additionalDetails = null) {
+    const requestBody = {
+        type_of_interview: typeOfInterview,
+        mode_of_interview: modeOfInterview,
+        stage_of_interview: stageOfInterview,
+        scheduled_interview_timing: timingOfInterview,
+        interviewer_name: interviewerName,
+        additional_details: additionalDetails
+    };
+
+    fetch(`http://localhost:3000/requested_candidates/${candidateId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to schedule candidate interview.');
+        }
+        return response.json();
+    })
+    .then(updatedCandidate => {
+        console.log('Candidate interview scheduled successfully:', updatedCandidate);
+
+        // Update the table row and disable the button
+        updateTableRow(updatedCandidate);
+
+        // Disabling the button and saving the state
+        const button = document.querySelector(`.schedule-button[data-candidate-id="${candidateId}"]`);
+        if (button) {
+            button.disabled = true;
+            button.classList.add('disabled'); // Add class for visual feedback
+            
+            // Save button state to localStorage
+            localStorage.setItem(`buttonDisabled_${candidateId}`, 'true');
+        }
+        alert('Interview successfully scheduled! Email sent successfully!');
+    })
+    .catch(error => {
+        console.error('Error scheduling candidate interview:', error);
+        alert('Failed to schedule candidate interview');
+    });
+}
+
+
+            function updateTableRow(updatedCandidate) {
+    if (!updatedCandidate || !updatedCandidate.requested_candidate_id) {
+        return;
+    }
+
+    const rows = document.querySelectorAll('#interviewData tr');
+
+    rows.forEach(row => {
+        const candidateId = row.getAttribute('data-candidate-id');
+        if (candidateId === updatedCandidate.requested_candidate_id.toString()) {
+            row.querySelector('.type-of-interview select').value = updatedCandidate.type_of_interview || '';
+            row.querySelector('.mode-of-interview select').value = updatedCandidate.mode_of_interview || '';
+            row.querySelector('.stage-of-interview select').value = updatedCandidate.stage_of_interview || '';
+            row.querySelector('.timing-of-interview input').value = updatedCandidate.scheduled_interview_timing || '';
+            row.querySelector('.interviewer-name').textContent = updatedCandidate.interviewer_name || '';
+            row.classList.add('updated-row');
+        }
+    });
+}
+
+
+            function fetchRequestedCandidates() {
+                fetch('http://localhost:3000/requested_candidates')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch requested candidates.');
+                        }
+                        return response.json();
+                    })
+                    .then(candidates => {
+                        candidates.forEach(candidate => {
+                            const row = createCandidateRow(candidate);
+                            interviewTableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching requested candidates:', error));
+            }
+
+            function filterCandidates() {
+                const filterValue = searchInput.value.trim().toLowerCase();
+                const rows = interviewTableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    let found = false;
+                    row.querySelectorAll('td').forEach(cell => {
+                        const cellText = cell.textContent.toLowerCase();
+                        if (cellText.includes(filterValue)) {
+                            found = true;
+                        }
+                    });
+
+                    if (found) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            function refreshTable() {
+                interviewTableBody.innerHTML = '';
+                fetchRequestedCandidates();
+            }
+
+            searchButton.addEventListener('click', filterCandidates);
+            searchInput.addEventListener('keyup', filterCandidates);
+            refreshButton.addEventListener('click', refreshTable);
+
+            fetchRequestedCandidates();
+        });
+    </script>
+</body>
+</html>

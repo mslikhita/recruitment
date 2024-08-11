@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Requests</title>
+    <link rel="stylesheet" href="requestlist.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="jobRequestList" class="container">
+        <h1>VIEW REQUEST</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter search keyword">
+            <button onclick="applySearch()" id="searchButton" style="margin:2px;"><i class="fas fa-search"></i></button>
+            <button onclick="refreshJobRequests()" id="refreshButton"><i class="fas fa-sync-alt"></i></button>
+        </div>
+<!-- Dropdown Container -->
+<div class="dropdown-container left-adjusted"> <!-- Added class if needed -->
+    <!-- Candidates Dropdown -->
+    <div class="dropdown-section candidates-dropdown">
+        <select id="candidateDropdown" onchange="handleCandidateDropdownChange()">
+            <option value="" disabled selected hidden>Candidates</option>
+            <option value="addCandidate">Add Candidates</option>
+            <option value="viewCandidates">View Candidates</option>
+        </select>
+    </div>
+
+    <!-- Interviews Dropdown -->
+    <div class="dropdown-section interviews-dropdown">
+        <select id="interviewDropdown" onchange="handleInterviewDropdownChange()">
+            <option value="" disabled selected hidden>Interviews</option>
+            <option value="scheduleInterview">Schedule Interview</option>
+            <option value="feedback">Feedback</option>
+        </select>
+    </div>
+</div>
+
+        
+        <table id="jobRequestTable">
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Designation</th>
+                    <th>Skills</th>
+                    <th>Experience</th>
+                    <th>Job Description Text</th>
+                    <th>Job Description File</th>
+                    <th>Action</th> 
+                    <th>Selected Candidates</th> 
+                    <th>Rejected Candidates</th> 
+                    <th>Status</th> <!-- Added missing closing tag -->
+                </tr>
+            </thead>
+            <tbody id="jobRequestBody">
+                <!-- Table rows will be dynamically populated -->
+            </tbody>
+        </table>
+        
+      <div class="pagination" id="paginationControls">
+    <button id="prevPageBtn">&laquo; Prev</button>
+    <span id="pageInfo">Page 1</span>
+    <button id="nextPageBtn">Next &raquo;</button>
+</div>
+
+
+    <!-- Popup Containers -->
+    <div id="popupContainer" class="popup-container">
+        <div id="popupContent" class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <h2>Candidates for Job Request</h2>
+            <table id="candidateTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile Number</th>
+                        <th>Experience</th>
+                        <th>Job Portal</th>
+                        <th>Referred By</th>
+                        <th>Preferred Location</th>
+                        <th>Expected Salary</th>
+                        <th>Notice Period</th>
+                        <th>Resume</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="candidateBody">
+                    <!-- Candidate details will be dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="selectedCandidatesPopup" class="popup-container" style="display: none;">
+        <div id="popupContent" class="popup-content">
+            <span class="close" onclick="closeSelectedCandidatesPopup()">&times;</span>
+            <h2 class="centered-text">Selected Candidates</h2>
+            <table id="selectedCandidatesTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile Number</th>
+                        <th>Experience</th>
+                        <th>Job Portal</th>
+                        <th>Referred By</th>
+                        <th>Preferred Location</th>
+                        <th>Expected Salary</th>
+                        <th>Notice Period</th>
+                        <th>Resume</th>
+                        <th>Schedule Interview</th>
+                    </tr>
+                </thead>
+                <tbody id="selectedCandidatesBody">
+                    <!-- Selected candidates details will be dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="requestlist.js"></script>
+    <script>
+     // Handle candidate dropdown changes
+function handleCandidateDropdownChange() {
+    var select = document.getElementById('candidateDropdown'); // Corrected ID
+    var value = select.value;
+
+    if (value === 'addCandidate') {
+        window.location.href = 'addcandidate.html';
+    } else if (value === 'viewCandidates') {
+        window.location.href = 'candidatelist.html';
+    }
+}
+
+// Handle interview dropdown changes
+function handleInterviewDropdownChange() {
+    var select = document.getElementById('interviewDropdown'); // Corrected ID
+    var value = select.value;
+
+    if (value === 'scheduleInterview') {
+        window.location.href = 'schedule.html';
+    } else if (value === 'feedback') {
+        window.location.href = 'feedbackstatus.html';
+    }
+}
+
+// Ensure dropdowns reset to their default state on page load
+function setDefaultOptions() {
+    var candidateSelect = document.getElementById('candidateDropdown'); // Corrected ID
+    var interviewSelect = document.getElementById('interviewDropdown'); // Corrected ID
+    
+    candidateSelect.value = "";
+    interviewSelect.value = "";
+}
+
+// Set default options when the page loads
+window.onload = setDefaultOptions;
+
+    </script>
+</body>
+</html>

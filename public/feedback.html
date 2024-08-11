@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Feedback</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            min-width: 100vw;
+        }
+
+        .container {
+            width: 100%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333333;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            padding: 15px;
+            table-layout: fixed;
+        }
+
+        thead {
+            background-color: #1f2333;
+            color: #ffffff;
+        }
+
+        thead th {
+            padding: 15px;
+            font-size: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #283e51;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+      
+        tbody tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        .status-dropdown {
+            appearance: auto;
+            -webkit-appearance: select;
+            -moz-appearance: menulist;
+            background: #ffffff;
+            border: 1px solid #ced4da;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            width: 105px;
+        }
+
+        .submit-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: not-allowed;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button.enabled {
+            cursor: pointer;
+            background-color: #007BFF;
+        }
+
+        .submit-button.enabled:hover {
+            background-color: #0056b3;
+        }
+
+        .submit-button.disabled {
+            background-color: #c0c0c0;
+        }
+
+        td[contenteditable="true"]:focus {
+            outline: none;
+        }
+
+        .additional-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .additional-actions button {
+            background-color: #1f6feb;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .additional-actions button:hover {
+            background-color: #1255a8;
+        }
+         
+
+        td:nth-child(1) {
+    max-width: 200px; /* Adjust as needed */
+    word-wrap: break-word; /* Allows long words to break onto the next line */
+    overflow-wrap: break-word; /* Ensures long words wrap correctly */
+    white-space: normal; /* Allows text to wrap */
+}
+
+        td:nth-child(2) {
+    max-width: 200px; /* Adjust as needed */
+    word-wrap: break-word; /* Allows long words to break onto the next line */
+    overflow-wrap: break-word; /* Ensures long words wrap correctly */
+    white-space: normal; /* Allows text to wrap */
+       }
+
+       td:nth-child(8) {
+    max-width: 200px; /* Adjust as needed */
+    word-wrap: break-word; /* Allows long words to break onto the next line */
+    overflow-wrap: break-word; /* Ensures long words wrap correctly */
+    white-space: normal; /* Allows text to wrap */
+       }
+
+
+
+
+        td.feedback {
+            width: 200px;
+            overflow-y: auto;
+            max-height: 100px;
+            word-wrap: break-word;
+            white-space: normal;
+            position: relative;
+        }
+
+        td.feedback::before {
+            content: "Click to edit";
+            color: #888;
+            font-size: 12px;
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        td.feedback:hover::before {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>CANDIDATE FEEDBACK</h1>
+
+    <div class="additional-actions">
+        <button onclick="redirectToCandidates()">Back to candidates</button>
+    </div>
+
+    <table id="feedbackTable">
+        <thead>
+            <tr>
+                <th>Candidate Name</th>
+                <th>Candidate Email</th>
+                <th>Type of Interview</th>
+                <th>Mode of Interview</th>
+                <th>Stage</th>
+                <th>Timing</th>
+                <th>Interviewer Name</th>
+                <th>Feedback</th>
+                <th>Score</th>
+                <th>Interview Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="feedbackData">
+            <!-- Data rows will be dynamically added here -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function redirectToCandidates() {
+        window.location.href = "viewrequest.html#popupContainer";
+    }
+
+    function convertToIST(utcDateString) {
+        const utcDate = new Date(utcDateString);
+        const options = {
+            timeZone: 'Asia/Kolkata',
+            hour12: true,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        return new Intl.DateTimeFormat('en-IN', options).format(utcDate);
+    }
+
+    function checkButtonStatus(row) {
+        const timingCell = row.querySelector('td:nth-child(6)');
+        const submitButton = row.querySelector('.submit-button');
+        const timingText = timingCell.textContent.trim();
+
+        console.log('Timing Text:', timingText);
+
+        // Parse the timing text
+        const [datePart, timePart] = timingText.split(', ');
+        const [day, month, year] = datePart.split('/');
+        const [hours, minutes] = timePart.split(':').map(Number);
+
+        if (!day || !month || !year || isNaN(hours) || isNaN(minutes)) {
+            console.error('Invalid timing format:', timingText);
+            return;
+        }
+
+        // Create a Date object for comparison
+        const timingDate = new Date(year, month - 1, day, hours, minutes);
+
+        // Log times for debugging
+        const now = new Date();
+        console.log('Current Time:', now);
+        console.log('Interview Timing:', timingDate);
+
+        if (now >= timingDate) {
+            submitButton.classList.add('enabled');
+            submitButton.classList.remove('disabled');
+            submitButton.disabled = false;
+        } else {
+            submitButton.classList.add('disabled');
+            submitButton.classList.remove('enabled');
+            submitButton.disabled = true;
+        }
+
+        // Check the localStorage to disable the button permanently if already submitted
+        const isSubmitted = localStorage.getItem(`submitted-${row.dataset.requestedCandidateId}`);
+        if (isSubmitted) {
+            submitButton.classList.add('disabled');
+            submitButton.classList.remove('enabled');
+            submitButton.disabled = true;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const feedbackTableBody = document.getElementById('feedbackData');
+
+        function updateCandidateFeedback(interview) {
+            const requestedCandidateId = interview.requested_candidate_id;
+            const row = feedbackTableBody.querySelector(`tr[data-requested-candidate-id="${requestedCandidateId}"]`);
+            if (row) {
+                row.querySelector('td:nth-child(8)').textContent = interview.feedback || '';
+                row.querySelector('td:nth-child(9)').textContent = interview.score || '';
+                row.querySelector('td:nth-child(10) select').value = interview.status || 'Pending';
+            }
+        }
+
+        function fetchInterviews() {
+            fetch('http://localhost:3000/requested_candidates')
+                .then(response => response.json())
+                .then(interviews => {
+                    interviews.forEach(interview => {
+                        const row = createInterviewRow(interview);
+                        feedbackTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching requested candidates:', error));
+        }
+
+        function createInterviewRow(interview) {
+            const row = document.createElement('tr');
+            const requestedCandidateId = interview.requested_candidate_id;
+
+            // Retrieve status from local storage or default to 'Pending'
+            const savedStatus = localStorage.getItem(`status-${requestedCandidateId}`);
+            const defaultStatus = savedStatus || interview.status || 'Pending';
+
+            row.dataset.requestedCandidateId = requestedCandidateId;
+
+            row.innerHTML = `
+                <td>${interview.candidate_name}</td>
+                <td>${interview.candidate_email}</td>
+                <td>${interview.type_of_interview}</td>
+                <td>${interview.mode_of_interview}</td>
+                <td>${interview.stage_of_interview}</td>
+                <td>${convertToIST(interview.scheduled_interview_timing)}</td>
+                <td>${interview.interviewer_name}</td>
+                <td class="feedback" contenteditable="true" id="feedback-${requestedCandidateId}">
+                    ${localStorage.getItem(`feedback-${requestedCandidateId}`) || interview.feedback || ''}
+                </td>
+                <td contenteditable="true" id="score-${requestedCandidateId}">
+                    ${localStorage.getItem(`score-${requestedCandidateId}`) || interview.score || ''}
+                </td>
+                <td>
+                    <select class="status-dropdown" data-requested-candidate-id="${requestedCandidateId}">
+                        <option value="Pending" ${defaultStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Selected" ${defaultStatus === 'Selected' ? 'selected' : ''}>Selected</option>
+                        <option value="Rejected" ${defaultStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                    </select>
+                </td>
+                <td><button class="submit-button disabled" data-requested-candidate-id="${requestedCandidateId}" disabled>Submit</button></td>
+            `;
+
+            const statusDropdown = row.querySelector('.status-dropdown');
+            statusDropdown.addEventListener('change', function () {
+                const selectedStatus = statusDropdown.value;
+                localStorage.setItem(`status-${requestedCandidateId}`, selectedStatus);
+            });
+
+            const submitButton = row.querySelector('.submit-button');
+            submitButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                const feedbackElem = row.querySelector(`#feedback-${requestedCandidateId}`);
+                const scoreElem = row.querySelector(`#score-${requestedCandidateId}`);
+
+                const feedback = feedbackElem.textContent.trim();
+                const score = scoreElem.textContent.trim();
+                const selectedStatus = row.querySelector('.status-dropdown').value;
+
+                if (feedback === '' || score === '' || selectedStatus === '') {
+                    alert('Feedback, Status, and Score fields are required.');
+                    return;
+                }
+
+                const scoreNum = parseInt(score, 10);
+                if (isNaN(scoreNum) || scoreNum < 1 || scoreNum > 10) {
+                    alert('Score must be a number between 1 and 10.');
+                    return;
+                }
+
+                if (selectedStatus === 'Pending') {
+                    alert('Please select either "Selected" or "Rejected" for the status before submitting.');
+                    return;
+                }
+
+                const confirmation = confirm(`You are about to submit feedback with the status: ${selectedStatus}. Do you want to proceed?`);
+                if (!confirmation) {
+                    return;
+                }
+
+                const data = {
+                    feedback: feedback,
+                    score: scoreNum,
+                    status: selectedStatus,
+                };
+
+                fetch(`http://localhost:3000/requested_candidates/${requestedCandidateId}/feedback`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(updatedInterview => {
+                        localStorage.setItem(`feedback-${requestedCandidateId}`, feedback);
+                        localStorage.setItem(`score-${requestedCandidateId}`, score);
+                        localStorage.setItem(`status-${requestedCandidateId}`, selectedStatus);
+                        localStorage.setItem(`submitted-${requestedCandidateId}`, 'true'); // Set submission flag
+
+                        updateCandidateFeedback(updatedInterview);
+
+                        submitButton.classList.add('disabled');
+                        submitButton.classList.remove('enabled');
+                        submitButton.disabled = true;
+
+                        alert('Feedback submitted successfully!');
+                    })
+                    .catch(error => console.error('Error submitting feedback:', error));
+            });
+
+            // Check the button status initially
+            checkButtonStatus(row);
+
+            return row;
+        }
+
+        fetchInterviews();
+
+        // Recheck button statuses periodically
+        setInterval(() => {
+            document.querySelectorAll('tr').forEach(row => checkButtonStatus(row));
+        }, 60000); // Check every minute
+    });
+</script>
+</body>
+</html>
